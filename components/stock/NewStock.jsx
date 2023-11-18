@@ -15,8 +15,6 @@ const AddNewStock = () => {
 
   const [imagePaths, setImagePaths] = useState([]);
 
-  const [submitLoading, setSubmitLoading] = useState(false)
-
   const fetchCategories = async () => {
     try {
       const response = await axios.post("/api/category/fetch-categories");
@@ -328,7 +326,7 @@ const AddNewStock = () => {
             type="submit"
             className="bg-[#f17e13] text-white px-4 py-1 rounded-full hover:opacity-75"
           >
-            {!setSubmitLoading ? "Adding Stock" : "Add Stock"}
+            Add Stock
           </button>
         </div>
         
