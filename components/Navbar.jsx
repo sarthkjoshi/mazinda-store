@@ -4,9 +4,12 @@ import Link from "next/link";
 import MazindaLogo from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <>
@@ -22,6 +25,10 @@ const Navbar = () => {
                 alt="Mazinda Logo"
               />
             </Link>
+            <button className="bg-yellow-300 text-white py-1 px-4 rounded-full hover:bg-yellow-400" onClick={() => {
+              Cookies.remove('store_token')
+              router.push('/auth/login')
+            }}>Logout</button>
           </div>
         </nav>
       )}
