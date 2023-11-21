@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "aws-sdk": "^2.1500.0",
     "axios": "^1.6.2",
     "flowbite": "^2.1.1",
     "js-cookie": "^3.0.5",

@@ -31,32 +31,24 @@ const AddNewStock = () => {
 
   const fetchSubcategories = async (selectedCategory) => {
     try {
-      const response = await axios.post("/api/category/fetch-categories");
-      const categoriesData = response.data;
-
-      console.log(categoriesData);
-
-      // Find the selected category object in the categoriesData array
-      const selectedCategoryData = categoriesData.categories.find(
-        (category) => category.categoryName === selectedCategory
-      );
-
-      if (selectedCategoryData) {
-        // Extract the subcategories from the selected category object
-        const fetchedSubCategories = selectedCategoryData.subcategories || [];
-        setSubcategories(fetchedSubCategories);
-      } else {
-        // Handle the case where the selected category is not found
-        console.error(
-          `Category "${selectedCategory}" not found in categoriesData.`
-        );
-      }
+      const response = await axios.post("/api/category/fetch-subcategories", {
+        selectedCategory,
+      });
+  
+      const selectedCategoryData = response.data;
+  
+      console.log(selectedCategoryData);
+  
+      // Extract the subcategories from the response
+      const fetchedSubCategories = selectedCategoryData.subcategories || [];
+      setSubcategories(fetchedSubCategories);
+  
       setLoadingSubcategories(false); // Set loading state to false
     } catch (error) {
       console.error("Error fetching subcategories:", error);
       setLoadingSubcategories(false); // Set loading state to false even on error
     }
-  };
+  };  
 
   useEffect(() => {
     fetchCategories();
@@ -77,7 +69,6 @@ const AddNewStock = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(productData);
 
     try {
       const response = await axios.post("/api/product/add-new-product", {
