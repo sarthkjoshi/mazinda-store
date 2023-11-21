@@ -99,6 +99,7 @@ const AddNewStock = () => {
         },
         description: "",
       });
+      location.reload();
     } catch (e) {
       toast.error(e.message, { autoClose: 3000 });
     }
