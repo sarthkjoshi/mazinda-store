@@ -34,8 +34,6 @@ const AddNewStock = () => {
       const response = await axios.post("/api/category/fetch-categories");
       const categoriesData = response.data;
 
-      console.log(categoriesData);
-
       // Find the selected category object in the categoriesData array
       const selectedCategoryData = categoriesData.categories.find(
         (category) => category.categoryName === selectedCategory
@@ -67,20 +65,46 @@ const AddNewStock = () => {
     storeToken: Cookies.get("store_token"),
     category: "",
     subcategory: "",
-    imagePaths:[],
+    imagePaths: [],
     pricing: {
       mrp: "",
       costPrice: "",
     },
-    description: "",
+    description: [{ heading: "", description: "" }],
   });
+
+  const handleHeadingDescriptionChange = (index, e) => {
+    const { name, value } = e.target;
+    setProductData((prevData) => {
+      const updatedDescription = [...prevData.description];
+      updatedDescription[index][name] = value;
+      return {
+        ...prevData,
+        description: updatedDescription,
+      };
+    });
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+      // Validation checks
+  if (
+    productData.productName === '' ||
+    productData.category === '' ||
+    productData.subcategory === '' ||
+    productData.pricing.mrp === '' ||
+    productData.pricing.costPrice === '' ||
+    productData.description.some((hd) => !hd.heading || !hd.description)
+  ) {
+    toast.warn("Please fill in all the required fields", { autoClose: 3000 });
+    return;
+  }
+
+    console.log(productData);
     try {
       const response = await axios.post("/api/product/add-new-product", {
-        productData,
+        productData
       });
 
       if (response.data.success) {
@@ -97,7 +121,7 @@ const AddNewStock = () => {
           mrp: "",
           costPrice: "",
         },
-        description: "",
+        description: [{ heading: "", description: "" }]
       });
       location.reload();
     } catch (e) {
@@ -271,7 +295,7 @@ const AddNewStock = () => {
           Upload Product Images (Upto 10)
         </label>
 
-        <div className="p-2 border rounded-xl">
+        <div className="p-2 border rounded-xl mb-4">
           <input
             type="file"
             name="file"
@@ -307,17 +331,45 @@ const AddNewStock = () => {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="description" className="block font-medium">
-            Description:
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows="4"
-            className="w-full px-2 py-1 border border-gray-300 rounded-md"
-            value={productData.description}
-            onChange={handleFieldChange}
-          />
+
+          <div className="mb-4">
+            <label htmlFor="description" className="block font-medium">
+              Add Product Descriptions:
+            </label>
+            {productData.description.map((hd, index) => (
+              <div key={index} className="flex flex-col mb-2">
+                <input
+                  type="text"
+                  name="heading"
+                  placeholder="Heading"
+                  className="px-2 py-1 border border-gray-300 rounded-md mr-2 my-2"
+                  value={hd.heading}
+                  onChange={(e) => handleHeadingDescriptionChange(index, e)}
+                />
+                <textarea
+                  name="description"
+                  placeholder="Description"
+                  rows="4"
+                  className="flex-grow px-2 py-1 border border-gray-300 rounded-md"
+                  value={hd.description}
+                  onChange={(e) => handleHeadingDescriptionChange(index, e)}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              className="bg-blue-500 px-4 py-2 text-white rounded-lg"
+              onClick={() =>
+                // setHeadingDescriptions((prev) => [
+                //   ...prev,
+                //   { heading: "", description: "" },
+                // ])
+                setProductData( (prev) => ({...prev, description:[ ...prev.description, { heading: "", description: "" }]}))
+              }
+            >
+              Add Another Heading - Description
+            </button>
+          </div>
         </div>
 
         <div className="w-full flex justify-center">
@@ -328,7 +380,6 @@ const AddNewStock = () => {
             Add Stock
           </button>
         </div>
-        
       </form>
     </div>
   );

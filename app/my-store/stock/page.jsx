@@ -28,7 +28,7 @@ const StocksPage = () => {
             Create a New Fresh Stock
           </button>
           <div
-            className={`transition-max-height overflow-hidden duration-700 ${isCreateStockExpanded ? 'max-h-screen' : 'max-h-0'}`}
+            className={`transition-max-height overflow-hidden duration-700 ${isCreateStockExpanded ? 'max-h-fit' : 'max-h-0'}`}
           >
             {isCreateStockExpanded && <div className='mt-5'><AddNewStock /></div>}
           </div>

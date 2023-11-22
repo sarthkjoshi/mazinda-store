@@ -9,7 +9,7 @@ const ProductSchema = new mongoose.Schema({
     imagePaths : { type: Array },
     topDeal: { type: Boolean, default: false },
     trending: { type: Boolean, default: false },
-    description: { type: String },
+    description: { type: Array },
     isAvailable: { type: Boolean, default: true },
     approvalStatus: { type: Boolean, default: false }
 }, { timestamps: true });
