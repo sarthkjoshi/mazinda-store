@@ -101,7 +101,6 @@ const AddNewStock = () => {
     return;
   }
 
-    console.log(productData);
     try {
       const response = await axios.post("/api/product/add-new-product", {
         productData
