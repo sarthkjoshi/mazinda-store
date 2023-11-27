@@ -42,13 +42,12 @@ const RegisterStorePage = () => {
       formData,
     });
     const json = response.data;
-    console.log(json)
     setIsSubmitting(false);
 
     if (json.success) {
       Cookies.set("store_token", json.store_token);
       toast.success(json.message, { autoClose: 3000 });
-      router.push("/store");
+      router.push("/");
     } else {
       toast.error(json.message, { autoClose: 3000 });
     }

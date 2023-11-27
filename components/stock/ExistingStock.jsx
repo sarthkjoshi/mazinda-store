@@ -10,11 +10,11 @@ const ExistingStock = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.post("/api/product/fetch-search-products", {
+      const { data } = await axios.post("/api/product/fetch-search-products", {
         searchQuery: searchTerm,
       });
 
-      setSearchResults(response.data.products);
+      setSearchResults(data.products);
     } catch (error) {
       console.error("Error searching products:", error);
     }
@@ -129,7 +129,7 @@ const ExistingStock = () => {
           <div className="mt-2">
             <h2 className="mb-3">Search Results:</h2>
             <ul className="flex flex-wrap justify-between">
-              {searchResults.map(product => (
+              {searchResults.map((product) => (
                 <li
                   key={product._id}
                   onClick={() => handleProductSelection(product)}
@@ -196,19 +196,23 @@ const ExistingStock = () => {
             </div>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="description" className="block font-medium">
-              Description:
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows="4"
-              className="w-full px-2 py-1 border border-gray-300 rounded-md"
-              value={productData.description}
-              onChange={handleFieldChange}
-            />
-          </div>
+          {productData.description && productData.description.map((desc) => {
+            return (
+              <div className="mb-4" key={desc.heading}>
+                <label htmlFor="description" className="block font-medium">
+                  {desc.heading}
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                  value={desc.description}
+                  onChange={handleFieldChange}
+                />
+              </div>
+            );
+          })}
 
           <div className="w-full flex justify-center">
             <button
@@ -217,14 +221,14 @@ const ExistingStock = () => {
             >
               Add Stock
             </button>
-            <button
+            {/* <button
               className="bg-white border border-[#f17e13] mx-2 text-[#f17e13] px-4 py-1 rounded-full hover:opacity-75"
               onClick={() => {
                 setSelectedProduct(null);
               }}
             >
               Clear
-            </button>
+            </button> */}
           </div>
         </form>
       }

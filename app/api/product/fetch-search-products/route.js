@@ -5,8 +5,6 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
     const { searchQuery } = await req.json();
 
-    console.log(searchQuery);
-
     try {
         await connectDB();
 
@@ -18,7 +16,7 @@ export async function POST(req) {
             $or: searchWords.map(word => ({
                 $or: [
                     { productName: { $regex: new RegExp(word, 'i') } },
-                    { description: { $regex: new RegExp(word, 'i') } }
+                    // { description: { $regex: new RegExp(word, 'i') } }
                 ]
             }))
         }).exec();
@@ -26,10 +24,10 @@ export async function POST(req) {
         // Calculate a relevance score for each product based on the number of matched words
         const productsWithScore = products.map(product => {
             const productNameLower = product.productName.toLowerCase();
-            const descriptionLower = product.description.toLowerCase();
+            // const descriptionLower = product.description.toLowerCase();
 
             const score = searchWords.reduce((acc, word) => {
-                if (productNameLower.includes(word) || descriptionLower.includes(word)) {
+                if (productNameLower.includes(word)) {
                     return acc + 1;
                 }
                 return acc;
@@ -43,6 +41,7 @@ export async function POST(req) {
 
         return NextResponse.json({ success: true, products: sortedProducts });
     } catch (error) {
+        console.error("Error:", error);
         return NextResponse.json({ success: false, error: "An error occurred while fetching products: " + error });
     }
 }
