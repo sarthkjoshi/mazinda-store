@@ -38,10 +38,11 @@ const RegisterStorePage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const response = await axios.post("/api/store/auth/register-store", {
+    const response = await axios.post("/api/auth/register-store", {
       formData,
     });
-    const json = await response.data;
+    const json = response.data;
+    console.log(json)
     setIsSubmitting(false);
 
     if (json.success) {
@@ -55,7 +56,7 @@ const RegisterStorePage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen my-4">
-      <Image className="my-4" src={MazindaLogoFull} />
+      <Image className="my-4" src={MazindaLogoFull} alt="mazinda" />
       <div className="max-w-md w-full p-2 bg-white rounded-lg">
         <h1 className="mb-1 text-center font-bold text-4xl">Register Store</h1>
         <div className="flex items-center justify-center mb-4">
