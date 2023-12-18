@@ -155,14 +155,18 @@ const ProductDetails = () => {
                 />
               </div>
               <div>
-                <label className="block font-semibold">Description:</label>
-                <textarea
-                  type="text"
-                  name="description"
-                  value={productData.description}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                />
+                {productData.description.map((desc) => (
+                  <>
+                    <label className="block font-semibold">{desc.heading}</label>
+                    <textarea
+                      type="text"
+                      name="description"
+                      value={desc.description}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+                    />
+                  </>
+                ))}
               </div>
             </form>
           ) : (

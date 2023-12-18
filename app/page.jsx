@@ -23,18 +23,22 @@ const StoreDashboard = async () => {
   let approvalStatus;
 
   try {
-    console.log(store_token);
-    const response = await axios.post(`/api/fetch-store`, {
+    const { data } = await axios.post(`/api/fetch-store`, {
       store_token,
     });
 
-    if (response.data.success) {
-      approvalStatus = response.data.store.approvedStatus;
+    console.log(data);
+
+    if (data.success) {
+      approvalStatus = data.store.approvedStatus;
+      console.log(approvalStatus);
     } else {
       console.error("Error fetching approval status");
+      return null; // Return null to avoid rendering the rest of the component
     }
   } catch (error) {
     console.error("Error fetching approval status: ", error);
+    return null; // Return null to avoid rendering the rest of the component
   }
 
   if (approvalStatus === "approved") {

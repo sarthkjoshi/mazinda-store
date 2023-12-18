@@ -15,10 +15,23 @@ const AddNewStock = () => {
 
   const [imagePaths, setImagePaths] = useState([]);
 
+  const [productData, setProductData] = useState({
+    productName: "",
+    storeToken: Cookies.get("store_token"),
+    category: "",
+    subcategory: "",
+    imagePaths: [],
+    pricing: {
+      mrp: "",
+      costPrice: "",
+    },
+    description: [{ heading: "", description: "" }],
+  });
+
   const fetchCategories = async () => {
     try {
-      const response = await axios.post("/api/category/fetch-categories");
-      const fetchedCategories = response.data.categories.map(
+      const { data } = await axios.post("/api/category/fetch-categories");
+      const fetchedCategories = data.categories.map(
         (category) => category.categoryName
       );
       setCategories(fetchedCategories);
@@ -31,11 +44,10 @@ const AddNewStock = () => {
 
   const fetchSubcategories = async (selectedCategory) => {
     try {
-      const response = await axios.post("/api/category/fetch-categories");
-      const categoriesData = response.data;
+      const { data } = await axios.post("/api/category/fetch-categories");
 
       // Find the selected category object in the categoriesData array
-      const selectedCategoryData = categoriesData.categories.find(
+      const selectedCategoryData = data.categories.find(
         (category) => category.categoryName === selectedCategory
       );
 
@@ -60,19 +72,6 @@ const AddNewStock = () => {
     fetchCategories();
   }, []);
 
-  const [productData, setProductData] = useState({
-    productName: "",
-    storeToken: Cookies.get("store_token"),
-    category: "",
-    subcategory: "",
-    imagePaths: [],
-    pricing: {
-      mrp: "",
-      costPrice: "",
-    },
-    description: [{ heading: "", description: "" }],
-  });
-
   const handleHeadingDescriptionChange = (index, e) => {
     const { name, value } = e.target;
     setProductData((prevData) => {
@@ -83,48 +82,53 @@ const AddNewStock = () => {
         description: updatedDescription,
       };
     });
-  };  
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-      // Validation checks
-  if (
-    productData.productName === '' ||
-    productData.category === '' ||
-    productData.subcategory === '' ||
-    productData.pricing.mrp === '' ||
-    productData.pricing.costPrice === '' ||
-    productData.description.some((hd) => !hd.heading || !hd.description)
-  ) {
-    toast.warn("Please fill in all the required fields", { autoClose: 3000 });
-    return;
-  }
+    // Validation checks
+    if (
+      productData.productName === "" ||
+      productData.category === "" ||
+      productData.subcategory === "" ||
+      productData.pricing.mrp === "" ||
+      productData.pricing.costPrice === "" ||
+      productData.description.some((hd) => !hd.heading || !hd.description)
+    ) {
+      toast.warn("Please fill in all the required fields", { autoClose: 3000 });
+      return;
+    } else if (!imagePaths.length) {
+      toast.warn("Kindly upload atleast one image of the product");
+      return;
+    } else {
+      try {
+        const { data } = await axios.post("/api/product/add-new-product", {
+          productData,
+        });
 
-    try {
-      const response = await axios.post("/api/product/add-new-product", {
-        productData
-      });
+        if (data.success) {
+          toast.success(data.message, { autoClose: 3000 });
+        } else {
+          toast.error(data.message, { autoClose: 3000 });
+        }
 
-      if (response.data.success) {
-        toast.success(response.data.message, { autoClose: 3000 });
-      } else {
-        toast.error(response.data.message, { autoClose: 3000 });
+        setProductData({
+          productName: "",
+          storeToken: Cookies.get("store_token"),
+          category: "",
+          pricing: {
+            mrp: "",
+            costPrice: "",
+          },
+          description: [{ heading: "", description: "" }],
+        });
+
+        setImagePaths([]);
+        setFile(null);
+      } catch (error) {
+        toast.error(error.message, { autoClose: 3000 });
       }
-
-      setProductData({
-        productName: "",
-        storeToken: Cookies.get("store_token"),
-        category: "",
-        pricing: {
-          mrp: "",
-          costPrice: "",
-        },
-        description: [{ heading: "", description: "" }]
-      });
-      location.reload();
-    } catch (e) {
-      toast.error(e.message, { autoClose: 3000 });
     }
   };
 
@@ -320,9 +324,13 @@ const AddNewStock = () => {
           {imagePaths.length > 0 && (
             <div>
               <h2 className="mb-3">Uploaded Images:</h2>
-              <ul>
+              <ul className="flex flex-wrap gap-4">
                 {imagePaths.map((imageName, index) => (
-                  <li key={index}>{imageName}</li>
+                  <img
+                    className="w-14 aspect-square border border-gray-400 rounded-md p-2"
+                    src={imageName}
+                    key={index}
+                  />
                 ))}
               </ul>
             </div>
@@ -330,7 +338,6 @@ const AddNewStock = () => {
         </div>
 
         <div className="mb-4">
-
           <div className="mb-4">
             <label htmlFor="description" className="block font-medium">
               Add Product Descriptions:
@@ -363,7 +370,13 @@ const AddNewStock = () => {
                 //   ...prev,
                 //   { heading: "", description: "" },
                 // ])
-                setProductData( (prev) => ({...prev, description:[ ...prev.description, { heading: "", description: "" }]}))
+                setProductData((prev) => ({
+                  ...prev,
+                  description: [
+                    ...prev.description,
+                    { heading: "", description: "" },
+                  ],
+                }))
               }
             >
               Add Another Heading - Description
