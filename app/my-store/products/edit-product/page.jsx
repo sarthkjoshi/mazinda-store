@@ -6,9 +6,20 @@ import { useSearchParams } from "next/navigation";
 import OvalLoader from "@/components/utility/OvalLoader";
 import { toast } from "react-toastify";
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
 const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [productData, setProductData] = useState({});
+  const [editedDescription, setEditedDescription] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 
   const searchParams = useSearchParams();
@@ -16,11 +27,12 @@ const ProductDetails = () => {
 
   const fetchProductData = async () => {
     try {
-      const response = await axios.post("/api/product/fetch-product-by-id", {
+      const { data } = await axios.post("/api/product/fetch-product-by-id", {
         id,
       });
-      if (response.data.success) {
-        setProductData(response.data.product);
+      if (data.success) {
+        setProductData(data.product);
+        setEditedDescription(data.product.description);
         setLoading(false);
       } else {
         console.error("Error while fetching the product");
@@ -41,31 +53,16 @@ const ProductDetails = () => {
   const handleSaveClick = async () => {
     setIsEditing(false);
     try {
-      const response = await axios.put("/api/product/update-product", {
-        productData,
+      const { data } = await axios.put("/api/product/update", {
+        productData: {
+          ...productData,
+          description: editedDescription,
+        },
       });
-      if (response.data.success) {
-        toast.success(response.data.message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+      if (data.success) {
+        toast.success(data.message, { autoClose: 3000 });
       } else {
-        toast.error(response.data.message, {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        toast.error(data.message, { autoClose: 3000 });
       }
     } catch (error) {
       console.error("Error saving product data: ", error);
@@ -89,6 +86,12 @@ const ProductDetails = () => {
     setProductData(updatedProductData);
   };
 
+  const handleDescriptionChange = (index, field, event) => {
+    const newDescription = [...editedDescription];
+    newDescription[index][field] = event.target.value;
+    setEditedDescription(newDescription);
+  };
+
   return (
     <div className="container mx-auto p-4 bg-white rounded-xl">
       <h1 className="text-3xl font-semibold mb-4 text-center">
@@ -100,10 +103,11 @@ const ProductDetails = () => {
         <div className="flex flex-col items-center">
           {isEditing ? (
             <form className="space-y-4 w-full max-w-md">
-              <div className="grid grid-cols-2 gap-4">
+              
+              <div className="">
                 <div>
                   <label className="block font-semibold">Product Name:</label>
-                  <input
+                  <textarea
                     type="text"
                     name="productName"
                     value={productData.productName}
@@ -111,17 +115,8 @@ const ProductDetails = () => {
                     className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="block font-semibold">Category:</label>
-                  <input
-                    type="text"
-                    name="category"
-                    value={productData.category}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                  />
-                </div>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold">MRP:</label>
@@ -144,28 +139,29 @@ const ProductDetails = () => {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block font-semibold">Image URI:</label>
-                <input
-                  type="text"
-                  name="imageURI"
-                  value={productData.imageURI}
-                  onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div>
-                {productData.description.map((desc) => (
-                  <>
-                    <label className="block font-semibold">{desc.heading}</label>
-                    <textarea
-                      type="text"
-                      name="description"
-                      value={desc.description}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+              <div className="mt-4">
+                <label className="block font-semibold">Description:</label>
+                {editedDescription.map((desc, index) => (
+                  <div
+                    key={index}
+                    className="border flex flex-col p-2 rounded-md my-2"
+                  >
+                    <input
+                      className="border border-black py-1 px-2 my-2 rounded-md"
+                      value={desc.heading}
+                      onChange={(e) =>
+                        handleDescriptionChange(index, "heading", e)
+                      }
                     />
-                  </>
+                    <textarea
+                      className="border border-black py-1 px-2 my-2 rounded-md"
+                      rows={12}
+                      value={desc.description}
+                      onChange={(e) =>
+                        handleDescriptionChange(index, "description", e)
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             </form>
@@ -174,84 +170,37 @@ const ProductDetails = () => {
               <div className="mb-4 w-44">
                 <img
                   className="w-full rounded-lg"
-                  src={productData.imageURI}
+                  src={productData.imagePaths[0]}
                   alt={productData.name}
                 />
               </div>
-              <div className="flex justify-between items-center md:w-1/2">
-                <div className="w-full">
-                  <div className="flex items-center justify-center">
-                    {productData.approvalStatus ? (
-                      <p className="text-lg my-2 bg-green-200 px-3 py-1 rounded-full w-fit text-green-800">
-                        Approved
-                      </p>
-                    ) : (
-                      <p className="text-lg my-2 bg-yellow-200 px-3 py-1 rounded-full w-fit text-yellow-500">
-                        Pending
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      Product Name:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
+              <Table className="mt-3">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="">Name</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>MRP</TableHead>
+                    <TableHead className="">Cost Price</TableHead>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">
                       {productData.productName}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      Category:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
-                      {productData.category}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      MRP:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
-                      {productData.pricing.mrp}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      Cost Price:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
-                      {productData.pricing.costPrice}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      Trending:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
-                      {productData.trending ? "Yes" : "No"}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <p className="inline-block mx-2 my-3 font-semibold text-lg">
-                      Top Deal:
-                    </p>
-                    <p className="inline-block mx-2 text-lg">
-                      {productData.topDeal ? "Yes" : "No"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                    </TableCell>
+                    <TableCell>{productData.category}</TableCell>
+                    <TableCell>{productData.pricing.mrp}</TableCell>
+                    <TableCell>{productData.pricing.costPrice}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
           )}
 
           {isEditing ? (
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center mb-5">
               <button
                 onClick={handleSaveClick}
                 className="bg-[#fb691e] w-1/4 my-2 mx-1 text-white px-4 py-2 rounded-md hover:opacity-70 focus:outline-none mb-10"

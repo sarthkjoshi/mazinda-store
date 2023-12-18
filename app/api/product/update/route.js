@@ -6,8 +6,6 @@ export async function PUT(req) {
     try {
         const { productData } = await req.json();
 
-        console.log(productData);
-
         await connectDB()
 
         let product = await Product.findOne({ _id: productData._id });
@@ -18,11 +16,7 @@ export async function PUT(req) {
             product.category = productData.category;
             product.subcategory = productData.subcategory;
             product.pricing = productData.pricing;
-            product.password = productData.password;
-            product.imageURI = productData.imageURI;
-            product.approvalStatus = productData.approvalStatus;
-            product.trending = productData.trending;
-            product.topDeal = productData.topDeal;
+            product.description = productData.description;
             product.isAvailable = productData.isAvailable;
 
             await product.save();
