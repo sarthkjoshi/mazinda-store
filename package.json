@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-tabs": "^1.0.4",
     "aws-sdk": "^2.1500.0",
     "axios": "^1.6.2",
     "class-variance-authority": "^0.7.0",

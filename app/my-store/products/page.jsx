@@ -5,9 +5,22 @@ import Link from "next/link";
 import axios from "axios";
 import Cookies from "js-cookie";
 import OvalLoader from "@/components/utility/OvalLoader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
+  const [approvedProducts, setApprovedProducts] = useState([]);
+  const [pendingProducts, setPendingProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const toggleAvailability = async (productId) => {
@@ -38,20 +51,74 @@ const ProductsPage = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const response = await axios.post("/api/product/fetch-store-products", {
+    const { data } = await axios.post("/api/product/fetch-store-products", {
       storeToken: Cookies.get("store_token"),
     });
 
-    if (response.data.success) {
-      // Filter products with approvalStatus true
-      const approvedProducts = response.data.products.filter(
+    if (data.success) {
+      setProducts(data.products);
+
+      // Separate products into approved and pending based on approvalStatus
+      const approved = data.products.filter(
         (product) => product.approvalStatus === true
       );
-      setProducts(approvedProducts);
+      const pending = data.products.filter(
+        (product) => product.approvalStatus === false
+      );
+
+      setApprovedProducts(approved);
+      setPendingProducts(pending);
     } else {
-      console.error("An error occurred" + response.data.message);
+      console.error("An error occurred" + data.message);
     }
     setLoading(false);
+  };
+
+  const productsTable = (products) => {
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Product</TableHead>
+            <TableHead>Availability</TableHead>
+            <TableHead>Options</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow>
+              <TableCell>
+                <div className="flex items-center gap-4">
+                  <img className="w-10" src={product.imagePaths[0]} />
+                  {product.productName.slice(0, 25)}...
+                </div>
+              </TableCell>
+              <TableCell>
+                <label className="inline-flex items-center">
+                  <input
+                    type="checkbox"
+                    className="form-toggle-switch"
+                    checked={product.isAvailable}
+                    onChange={() => toggleAvailability(product._id)}
+                  />
+                  <span className="ml-2">
+                    {product.isAvailable ? "Available" : "Not Available"}
+                  </span>
+                </label>
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={`/my-store/products/edit-product?id=${product._id}`}
+                  className="text-blue-500"
+                >
+                  View / Edit
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
   };
 
   useEffect(() => {
@@ -59,49 +126,27 @@ const ProductsPage = () => {
   }, []);
 
   return (
-    <div className="p-4 md:w-1/2 mx-auto">
+    <div className="p-4 md:w-1/2 mx-auto mb-20">
       <h1 className="text-2xl font-bold mb-4 text-center">Your Products</h1>
 
       {!loading ? (
-        <div className="rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="py-2">Product Name</th>
-                <th className="py-2">Availability</th>
-                <th className="py-2">Options</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td className="p-2 text-center">{product.productName.slice(0,25)}...</td>
-                  <td className="py-2 text-center">
-                    <label className="inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        className="form-toggle-switch"
-                        checked={product.isAvailable}
-                        onChange={() => toggleAvailability(product._id)}
-                      />
-                      <span className="ml-2">
-                        {product.isAvailable ? "Available" : "Not Available"}
-                      </span>
-                    </label>
-                  </td>
-                  <td className="py-2 text-center">
-                    <Link
-                      href={`/my-store/products/edit-product?id=${product._id}`}
-                      className="text-blue-500"
-                    >
-                      View / Edit
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Tabs defaultValue="all">
+          <TabsList>
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="approved">Approved</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="all">{productsTable(products)}</TabsContent>
+
+          <TabsContent value="approved">
+            {productsTable(approvedProducts)}
+          </TabsContent>
+
+          <TabsContent value="pending">
+            {productsTable(pendingProducts)}
+          </TabsContent>
+        </Tabs>
       ) : (
         <OvalLoader />
       )}
