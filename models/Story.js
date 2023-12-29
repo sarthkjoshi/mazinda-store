@@ -2,10 +2,9 @@ const mongoose = require("mongoose");
 
 const StorySchema = new mongoose.Schema(
   {
-    storeId: { type: String, required: true },
-    product: { type: Object },
-    storeDetails: { type: String, required: true },
-    specialPrice: { type: String },
+    product: { type: Object, required: true },
+    storeDetails: { type: Object, required: true },
+    specialPrice: { type: String, required: true },
     viewersId: { type: Array },
     isSponsored: { type: Boolean },
   },

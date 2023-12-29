@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import Cookies from "js-cookie";
 import OvalLoader from "@/components/utility/OvalLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSelector } from "react-redux";
@@ -19,9 +18,9 @@ import {
 
 import {
   AlertDialog,
+  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -35,7 +34,6 @@ const ProductsPage = () => {
 
   const [approvedProducts, setApprovedProducts] = useState([]);
   const [pendingProducts, setPendingProducts] = useState([]);
-  // const [loading, setLoading] = useState(true);
   const [addStoryLoading, setAddStoryLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [specialPrice, setSpecialPrice] = useState(null);
@@ -68,9 +66,8 @@ const ProductsPage = () => {
 
   const addToStory = async () => {
     setAddStoryLoading(true);
-    const store_token = Cookies.get("store_token");
     try {
-      const { data } = await axios.post("/api/story/add-story", {
+      await axios.post("/api/story/add-story", {
         product: selectedProduct,
         storeDetails: {
           _id: store._id,
@@ -79,11 +76,8 @@ const ProductsPage = () => {
           storeName: store.storeName,
         },
         specialPrice,
-        store_token,
         isSponsored: true,
       });
-
-      console.log(data);
     } catch (e) {
       console.log(e);
     }
@@ -102,17 +96,7 @@ const ProductsPage = () => {
 
     setApprovedProducts(approved);
     setPendingProducts(pending);
-
-    // setLoading(false);
   }, []);
-
-  // if (loading) {
-  //   return (
-  //     <div>
-  //       <OvalLoader />
-  //     </div>
-  //   );
-  // }
 
   const productsTable = (products) => {
     return (
@@ -140,7 +124,7 @@ const ProductsPage = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <button
+            <AlertDialogAction
               onClick={() => addToStory()}
               disabled={
                 parseFloat(selectedProduct?.pricing?.costPrice) <
@@ -154,7 +138,7 @@ const ProductsPage = () => {
               }`}
             >
               {addStoryLoading ? <OvalLoader /> : "Continue"}
-            </button>
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
 

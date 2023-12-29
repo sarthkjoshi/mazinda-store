@@ -1,21 +1,17 @@
 import Story from "@/models/Story";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
-    const { product, specialPrice, store_token, isSponsored } =
+    const { product, specialPrice, storeDetails, isSponsored } =
       await req.json();
-
-    const storeData = jwt.verify(store_token, "this is jwt secret");
-    const storeId = storeData["id"];
 
     await connectDB();
 
     await Story.create({
       product,
-      storeId,
+      storeDetails,
       specialPrice,
       isSponsored,
     });
