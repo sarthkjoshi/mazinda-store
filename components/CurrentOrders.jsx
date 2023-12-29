@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -12,10 +12,10 @@ const CurrentOrders = () => {
 
   const fetchData = async () => {
     const storeToken = Cookies.get("store_token");
-    const response = await axios.post("/api/order/fetch-store-orders", {
+    const { data } = await axios.post("/api/order/fetch-store-orders", {
       storeToken,
     });
-    setCurrentOrders(response.data.currentOrders);
+    setCurrentOrders(data.currentOrders);
     setPageLoading(false);
   };
 
@@ -46,8 +46,12 @@ const CurrentOrders = () => {
 
                 return (
                   <tr key={order._id}>
-                    <td className="py-2 text-center px-1 text-[0.7em] md:text-sm">{formattedDate}</td>
-                    <td className="py-2 text-center px-1 text-[0.7em] md:text-sm">{formattedTime}</td>
+                    <td className="py-2 text-center px-1 text-[0.7em] md:text-sm">
+                      {formattedDate}
+                    </td>
+                    <td className="py-2 text-center px-1 text-[0.7em] md:text-sm">
+                      {formattedTime}
+                    </td>
                     <td className="py-2 text-center">
                       {order.cart.map((item) => (
                         <Link

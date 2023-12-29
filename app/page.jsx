@@ -1,106 +1,55 @@
 "use client";
 
+import { useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
-const StoreDashboard = async () => {
+const StoreDashboard = () => {
   const router = useRouter();
-  let store_token;
 
-  try {
-    store_token = Cookies.get("store_token");
+  useEffect(() => {
+    const fetchData = async () => {
+      let storeToken;
 
-    if (!store_token) {
-      router.push("/auth/register");
-      return null; // Return null to avoid rendering the rest of the component
-    }
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+      try {
+        storeToken = Cookies.get("store_token");
 
-  let approvalStatus;
+        if (!storeToken) {
+          router.push("/auth/register");
+          return;
+        }
 
-  try {
-    const { data } = await axios.post(`/api/fetch-store`, {
-      store_token,
-    });
+        const { data } = await axios.post(`/api/fetch-store`, {
+          store_token: storeToken,
+        });
 
-    console.log(data);
+        if (data.success) {
+          const approvalStatus = data.store.approvedStatus;
 
-    if (data.success) {
-      approvalStatus = data.store.approvedStatus;
-      console.log(approvalStatus);
-    } else {
-      console.error("Error fetching approval status");
-      return null; // Return null to avoid rendering the rest of the component
-    }
-  } catch (error) {
-    console.error("Error fetching approval status: ", error);
-    return null; // Return null to avoid rendering the rest of the component
-  }
+          if (approvalStatus === "approved") {
+            router.push("/my-store");
+          } else if (approvalStatus === "pending") {
+            console.log(
+              "Your request for store approval is currently pending. You will be notified once it is approved."
+            );
+          } else if (approvalStatus === "rejected") {
+            console.error(
+              "Unfortunately, your store request has been rejected. You can reach out at contact@mazinda.com for more information."
+            );
+          }
+        } else {
+          console.error("Error fetching store data");
+        }
+      } catch (error) {
+        console.error("Error: ", error);
+      }
+    };
 
-  if (approvalStatus === "approved") {
-    router.push('/my-store');
-    return null;
-  }
+    fetchData();
+  }, [router]);
 
-  return (
-    <div>
-      {approvalStatus === "pending" ? (
-        <div className="text-yellow-400 mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 inline-block mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M17 8a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 21a9 9 0 01-9-9h2a7 7 0 007 7 7 7 0 007-7h2a9 9 0 01-9 9z"
-            />
-          </svg>
-          Your request for store approval is currently pending. You will
-          be notified once it is approved.
-        </div>
-      ) : approvalStatus === "rejected" ? (
-        <div className="text-red-600 mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 inline-block mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-          Unfortunately, your store request has been rejected. You can
-          reach out at contact@mazinda.com for more information.
-        </div>
-      ) : null}
-    </div>
-  );
+  return null; // This component doesn't render anything
 };
 
 export default StoreDashboard;

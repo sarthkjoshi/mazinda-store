@@ -15,6 +15,8 @@ export async function POST(req) {
         // Checking if the Store already exists
         let store = await Store.findOne({ mobileNumber: identifier });
 
+        console.log(store);
+
         if (store) {
 
             if (store.password === password) {

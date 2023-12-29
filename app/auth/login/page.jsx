@@ -41,17 +41,16 @@ const LoginPage = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    const response = await axios.post("/api/auth/login-store", {
+    const { data } = await axios.post("/api/auth/login-store", {
       credentials,
     });
 
-    console.log(response.data);
-    if (response.data.success) {
-      const { store_token } = response.data;
-      Cookies.set("store_token", store_token, { expires: 1000 });
+    console.log(data);
+    if (data.success) {
+      Cookies.set("store_token", data.store_token, { expires: 1000 });
       router.push(`/store`);
     } else {
-      toast.error(response.data.message, { autoClose: 3000 });
+      toast.error(data.message, { autoClose: 3000 });
     }
     setSubmitting(false);
   };

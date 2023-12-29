@@ -103,7 +103,6 @@ const ProductDetails = () => {
         <div className="flex flex-col items-center">
           {isEditing ? (
             <form className="space-y-4 w-full max-w-md">
-              
               <div className="">
                 <div>
                   <label className="block font-semibold">Product Name:</label>
@@ -166,7 +165,7 @@ const ProductDetails = () => {
               </div>
             </form>
           ) : (
-            <div className="w-full flex flex-col items-center">
+            <div className="md:w-1/2 flex flex-col items-center">
               <div className="mb-4 w-44">
                 <img
                   className="w-full rounded-lg"
@@ -174,6 +173,31 @@ const ProductDetails = () => {
                   alt={productData.name}
                 />
               </div>
+
+              {isEditing ? (
+                <div className="flex w-full">
+                  <button
+                    onClick={handleSaveClick}
+                    className="bg-[#fb691e] w-1/4 my-2 mx-1 text-white px-4 py-2 rounded-md hover:opacity-70 focus:outline-none mb-10"
+                  >
+                    Save
+                  </button>
+
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="w-1/4 my-2 mx-1 text-[#fb691e] border border-[#fb691e] px-4 py-2 rounded-md hover:opacity-70 focus:outline-none mb-10"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleEditClick}
+                  className="bg-[#fb691e] my-5 text-white px-5 py-1 rounded-md hover:opacity-70 text-sm self-end"
+                >
+                  Edit
+                </button>
+              )}
 
               <Table className="mt-3">
                 <TableHeader>
@@ -197,31 +221,6 @@ const ProductDetails = () => {
                 </TableBody>
               </Table>
             </div>
-          )}
-
-          {isEditing ? (
-            <div className="flex w-full justify-center mb-5">
-              <button
-                onClick={handleSaveClick}
-                className="bg-[#fb691e] w-1/4 my-2 mx-1 text-white px-4 py-2 rounded-md hover:opacity-70 focus:outline-none mb-10"
-              >
-                Save
-              </button>
-
-              <button
-                onClick={() => setIsEditing(false)}
-                className="w-1/4 my-2 mx-1 text-[#fb691e] border border-[#fb691e] px-4 py-2 rounded-md hover:opacity-70 focus:outline-none mb-10"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={handleEditClick}
-              className="bg-[#fb691e] my-5 text-white px-10 py-2 rounded-md hover:opacity-70 focus:outline-none mb-20"
-            >
-              Edit
-            </button>
           )}
         </div>
       )}
