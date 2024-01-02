@@ -21,7 +21,6 @@ export async function POST(req) {
       });
     }
     let undeliveredOrders = await Order.find({ status: { $ne: "Delivered" } });
-    console.log("Undelivered Orders", undeliveredOrders[0].cart);
     let storeOrders = [];
     let newCart = [];
 
