@@ -8,7 +8,6 @@ const AddNewStock = () => {
   const [loadingCategories, setLoadingCategories] = useState(true);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [loadingSubcategories, setLoadingSubcategories] = useState(true);
 
   const [file, setFile] = useState();
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -26,51 +25,64 @@ const AddNewStock = () => {
       costPrice: "",
     },
     description: [{ heading: "", description: "" }],
+    tags: [],
   });
 
-  const fetchCategories = async () => {
+  const handleTagsChange = (e) => {
+    const newTags = e.target.value
+      .replace(/ /g, "")
+      .split(",")
+      .map((tag) => tag.trim());
+    setProductData((prevData) => ({
+      ...prevData,
+      tags: newTags,
+    }));
+  };
+
+  const handleRemoveTag = (tag) => {
+    const updatedTags = productData.tags.filter((t) => t !== tag);
+    setProductData((prevData) => ({
+      ...prevData,
+      tags: updatedTags,
+    }));
+  };
+
+  const fetchCategoriesAndSubcategories = async () => {
     try {
       const { data } = await axios.post("/api/category/fetch-categories");
+
       const fetchedCategories = data.categories.map(
         (category) => category.categoryName
       );
       setCategories(fetchedCategories);
-      setLoadingCategories(false); // Set loading state to false
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      setLoadingCategories(false); // Set loading state to false even on error
-    }
-  };
+      setLoadingCategories(false);
 
-  const fetchSubcategories = async (selectedCategory) => {
-    try {
-      const { data } = await axios.post("/api/category/fetch-categories");
-
-      // Find the selected category object in the categoriesData array
-      const selectedCategoryData = data.categories.find(
-        (category) => category.categoryName === selectedCategory
-      );
-
-      if (selectedCategoryData) {
-        // Extract the subcategories from the selected category object
-        const fetchedSubCategories = selectedCategoryData.subcategories || [];
-        setSubcategories(fetchedSubCategories);
-      } else {
-        // Handle the case where the selected category is not found
-        console.error(
-          `Category "${selectedCategory}" not found in categoriesData.`
+      // If a category is selected, fetch its subcategories
+      if (productData.category) {
+        const selectedCategoryData = data.categories.find(
+          (category) => category.categoryName === productData.category
         );
+
+        if (selectedCategoryData) {
+          const fetchedSubCategories = selectedCategoryData.subcategories || [];
+          setSubcategories(fetchedSubCategories);
+        } else {
+          console.error(
+            `Category "${productData.category}" not found in categoriesData.`
+          );
+        }
+        // setLoadingSubcategories(false);
       }
-      setLoadingSubcategories(false); // Set loading state to false
     } catch (error) {
-      console.error("Error fetching subcategories:", error);
-      setLoadingSubcategories(false); // Set loading state to false even on error
+      console.error("Error fetching categories and subcategories:", error);
+      setLoadingCategories(false);
+      // setLoadingSubcategories(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategoriesAndSubcategories();
+  }, [productData.category]);
 
   const handleHeadingDescriptionChange = (index, e) => {
     const { name, value } = e.target;
@@ -86,6 +98,8 @@ const AddNewStock = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log(productData);
 
     // Validation checks
     if (
@@ -122,6 +136,7 @@ const AddNewStock = () => {
             costPrice: "",
           },
           description: [{ heading: "", description: "" }],
+          tags: [],
         });
 
         setImagePaths([]);
@@ -218,11 +233,7 @@ const AddNewStock = () => {
               name="category"
               className="w-full px-2 py-1 border border-gray-300 rounded-full text-gray-600"
               value={productData.category}
-              onChange={(e) => {
-                handleFieldChange(e);
-                const selectedCategory = e.target.value;
-                fetchSubcategories(selectedCategory);
-              }}
+              onChange={(e) => handleFieldChange(e)}
             >
               <option value="">Category</option>
               {loadingCategories ? (
@@ -251,7 +262,7 @@ const AddNewStock = () => {
               onChange={handleFieldChange}
             >
               <option value="">Subcategory</option>
-              {loadingSubcategories ? (
+              {productData.category === "" ? (
                 <option value="" disabled>
                   Select a Category
                 </option>
@@ -366,10 +377,6 @@ const AddNewStock = () => {
               type="button"
               className="bg-blue-500 px-4 py-2 text-white rounded-lg"
               onClick={() =>
-                // setHeadingDescriptions((prev) => [
-                //   ...prev,
-                //   { heading: "", description: "" },
-                // ])
                 setProductData((prev) => ({
                   ...prev,
                   description: [
@@ -382,6 +389,42 @@ const AddNewStock = () => {
               Add Another Heading - Description
             </button>
           </div>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="tags" className="block font-medium my-2">
+            Tags:
+          </label>
+          <div className="flex items-center">
+            <input
+              type="text"
+              id="tags"
+              name="tags"
+              className="w-full px-2 py-1 border border-gray-300 rounded-full"
+              value={productData.tags.join(", ")}
+              onChange={handleTagsChange}
+              placeholder="Enter tags (comma separated)"
+            />
+          </div>
+          {productData.tags.length > 0 && (
+            <div className="mt-2 flex flex-wrap">
+              {productData.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="bg-gray-200 text-gray-800 px-2 py-1 rounded-full mr-2 mb-2 flex items-center"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    className="ml-2 text-red-500"
+                    onClick={() => handleRemoveTag(tag)}
+                  >
+                    x
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="w-full flex justify-center">
