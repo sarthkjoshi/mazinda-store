@@ -112,8 +112,6 @@ const AddNewStock = () => {
               productData: productDataForCombination,
             });
 
-            console.log(data);
-
             if (data.success) {
               toast.success(data.message, { autoClose: 3000 });
             } else {
@@ -308,10 +306,6 @@ const AddNewStock = () => {
 
   const generatedCombinations = generateCombinations();
 
-  useEffect(() => {
-    console.log(productData.variants);
-  }, [productData.variants]);
-
   return (
     <div className="relative h-[80vh] md:w-1/2 mx-auto">
       <div className="px-4">
@@ -359,7 +353,7 @@ const AddNewStock = () => {
                     <Button variant="secondary">Add variant Category</Button>
                   </DrawerTrigger>
                   <DrawerContent>
-                    <DrawerHeader>
+                    <DrawerHeader className="flex flex-col items-center">
                       <DrawerTitle>Choose a variant Category</DrawerTitle>
                       <DrawerDescription>
                         ex. - Colour, Size, Quantity, etc
@@ -382,15 +376,14 @@ const AddNewStock = () => {
                           <SelectItem value="weight">Weight</SelectItem>
                           <SelectItem value="storage">Storage</SelectItem>
                           <SelectItem value="ram">RAM</SelectItem>
+                          <SelectItem value="flavour">Flavour</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <DrawerFooter>
                       <div className="flex justify-center gap-3">
                         <DrawerClose>
-                          <Button className="w-[30vw]" variant="outline">
-                            Cancel
-                          </Button>
+                          <Button variant="outline">Cancel</Button>
                         </DrawerClose>
 
                         <DrawerClose>
@@ -401,7 +394,6 @@ const AddNewStock = () => {
                                 [selectedVariantCategory]: [],
                               }));
                             }}
-                            className="w-[30vw]"
                           >
                             Add
                           </Button>
@@ -829,11 +821,7 @@ const AddNewStock = () => {
       </div>
 
       <div className="w-full flex gap-2 justify-center bg-white py-2 mb-20 px-4">
-        <Button
-          className="w-[45vw]"
-          onClick={() => setCounter(counter - 1)}
-          variant="secondary"
-        >
+        <Button onClick={() => setCounter(counter - 1)} variant="secondary">
           Previous
         </Button>
         {counter === 3 ? (
@@ -843,14 +831,12 @@ const AddNewStock = () => {
               Please wait
             </Button>
           ) : (
-            <Button type="submit" onClick={handleSubmit} className="w-[45vw]">
+            <Button type="submit" onClick={handleSubmit}>
               Add Product
             </Button>
           )
         ) : (
-          <Button className="w-[45vw]" onClick={() => setCounter(counter + 1)}>
-            Continue
-          </Button>
+          <Button onClick={() => setCounter(counter + 1)}>Continue</Button>
         )}
       </div>
     </div>

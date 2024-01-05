@@ -34,7 +34,7 @@ const CurrentOrders = () => {
   }, []);
 
   return (
-    <div className="p-4 md:w-3/4 md:mx-auto">
+    <div className="p-4 md:w-1/2 md:mx-auto">
       <h1 className="text-2xl font-bold mb-4 text-gray-800 text-center">
         Current Orders
       </h1>
