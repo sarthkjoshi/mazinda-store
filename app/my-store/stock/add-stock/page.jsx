@@ -523,7 +523,7 @@ const AddNewStock = () => {
             ) : null}
           </div>
         ) : counter === 2 ? (
-          <div>
+          <div className="mb-20">
             {Object.keys(productData.variants).length ? (
               <div>
                 {generatedCombinations.length > 0 && (
