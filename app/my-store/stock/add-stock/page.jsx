@@ -4,7 +4,7 @@ import BasicDetails from "@/components/add-product/BasicDetails";
 import ReviewProduct from "@/components/add-product/ReviewProduct";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { Label } from "@/components/ui/label";
@@ -95,6 +95,9 @@ const AddNewStock = () => {
           if (combination !== "0") {
             const productDataForCombination = {
               ...productData,
+              productName: {
+                ...productData.variants[combination]?.productName,
+              },
               pricing: {
                 ...productData.variants[combination]?.pricing,
               },
@@ -145,6 +148,36 @@ const AddNewStock = () => {
     } finally {
       setSubmitLoading(false);
     }
+  };
+
+  const handleProductNameChange = (e, combination) => {
+    const { value } = e.target;
+
+    setProductData((prevData) => {
+      const updatedVariants = { ...prevData.variants };
+
+      if (combination) {
+        // Update the specific combination's productName
+        const combinationData = updatedVariants[combination] || {
+          imagePaths: [],
+          description: [],
+          pricing: {},
+        };
+
+        updatedVariants[combination] = {
+          ...combinationData,
+          productName: value,
+        };
+      } else {
+        // Update the general productName
+        prevData.productName = value;
+      }
+
+      return {
+        ...prevData,
+        variants: { ...updatedVariants },
+      };
+    });
   };
 
   const handlePricingChange = (e, combination) => {
@@ -462,9 +495,12 @@ const AddNewStock = () => {
                 {generatedCombinations.length > 0 && (
                   <div>
                     <h2 className="mb-3 text-lg">Select Combinations</h2>
-                    <ul className="flex flex-col gap-4">
+                    <ul className="flex flex-col gap-2">
                       {generatedCombinations.map((combination, index) => (
-                        <div key={index} className="flex flex-col gap-2 mb-2">
+                        <div
+                          key={index}
+                          className="flex flex-col gap-2 mb-2 border px-4 py-3 rounded-md"
+                        >
                           <div className="flex gap-3">
                             <input
                               type="checkbox"
@@ -479,6 +515,7 @@ const AddNewStock = () => {
                                   } else {
                                     // Add the combination if it was unchecked
                                     variantsCopy[combination] = {
+                                      productName: "",
                                       imagePaths: [],
                                       description: [
                                         { heading: "", description: "" },
@@ -500,6 +537,26 @@ const AddNewStock = () => {
                           {/* Show inputs for images, pricing, and description if the combination is checked */}
                           {productData.variants[combination] && (
                             <div>
+                              <div className="mb-4 flex flex-col gap-1">
+                                <Label
+                                  htmlFor="productName"
+                                  className="block font-medium"
+                                >
+                                  Product Name for {combination}
+                                </Label>
+                                <Input
+                                  type="text"
+                                  id="productName"
+                                  name="productName"
+                                  value={
+                                    productData.variants[combination]
+                                      .productName
+                                  }
+                                  onChange={(e) =>
+                                    handleProductNameChange(e, combination)
+                                  }
+                                />
+                              </div>
                               <Label className="text-md">
                                 Images for {combination}
                               </Label>
@@ -687,6 +744,18 @@ const AddNewStock = () => {
               </div>
             ) : (
               <div>
+                <div className="mb-4 flex flex-col gap-1">
+                  <Label htmlFor="productName" className="block font-medium">
+                    Product Name
+                  </Label>
+                  <Input
+                    type="text"
+                    id="productName"
+                    name="productName"
+                    value={productData.productName}
+                    onChange={handleProductNameChange}
+                  />
+                </div>
                 <Label className="text-md" htmlFor="file">
                   Upload Product Images (Upto 10)
                 </Label>

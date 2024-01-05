@@ -3,6 +3,7 @@ import axios from "axios";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const BasicDetails = ({ productData, setProductData }) => {
   const [categories, setCategories] = useState([]);
@@ -74,25 +75,11 @@ const BasicDetails = ({ productData, setProductData }) => {
 
   return (
     <div className="min-h-[73vh]">
-      <div className="mb-4 flex flex-col gap-1">
-        <label htmlFor="productName" className="block font-medium">
-          Product Name:
-        </label>
-        <input
-          type="text"
-          id="productName"
-          name="productName"
-          className="w-full p-2 border border-gray-300 rounded-md"
-          value={productData.productName}
-          onChange={handleFieldChange}
-        />
-      </div>
-
       <div className="flex justify-between gap-2">
-        <div className="mb-4 w-full flex flex-col gap-1">
-          <label htmlFor="category" className="block font-medium">
+        <div className="mb-4 w-full flex flex-col gap-2">
+          <Label htmlFor="category" className="font-semibold">
             Category:
-          </label>
+          </Label>
           <select
             id="category"
             name="category"
@@ -115,10 +102,10 @@ const BasicDetails = ({ productData, setProductData }) => {
           </select>
         </div>
 
-        <div className="mb-4 w-full flex flex-col gap-1">
-          <label htmlFor="subcategory" className="block font-medium">
+        <div className="mb-4 w-full flex flex-col gap-2">
+          <Label htmlFor="subcategory" className="font-semibold">
             Sub-Category:
-          </label>
+          </Label>
           <select
             id="subcategory"
             name="subcategory"
@@ -142,16 +129,15 @@ const BasicDetails = ({ productData, setProductData }) => {
         </div>
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="tags" className="block font-medium my-2">
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="tags" className="font-semibold">
           Tags:
-        </label>
+        </Label>
         <div className="flex items-center">
-          <input
+          <Input
             type="text"
             id="tags"
             name="tags"
-            className="w-full p-2 border border-gray-300 rounded-md"
             value={productData.tags.join(", ")}
             onChange={handleTagsChange}
             placeholder="Enter tags (comma separated)"
@@ -164,7 +150,6 @@ const BasicDetails = ({ productData, setProductData }) => {
                 {tag}
                 <button
                   type="button"
-                  variant="destructive"
                   className="ml-2 text-red-500"
                   onClick={() => handleRemoveTag(tag)}
                 >
