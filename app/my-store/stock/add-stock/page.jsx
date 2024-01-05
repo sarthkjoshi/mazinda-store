@@ -4,7 +4,7 @@ import BasicDetails from "@/components/add-product/BasicDetails";
 import ReviewProduct from "@/components/add-product/ReviewProduct";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 import { Label } from "@/components/ui/label";
@@ -344,6 +344,38 @@ const AddNewStock = () => {
 
   return (
     <div className="relative h-[80vh] md:w-1/2 mx-auto">
+      <div className="w-full flex gap-2 bg-white py-2 px-4 items-center justify-between mb-10">
+        <span className="text-xl">
+          {counter === 0
+            ? "Basic Information"
+            : counter === 1
+            ? "Varient Info"
+            : counter === 2
+            ? "More Details"
+            : counter === 3
+            ? "Review and Add Product"
+            : null}
+        </span>
+        <div className="flex gap-2">
+          <Button onClick={() => setCounter(counter - 1)} variant="secondary">
+            Previous
+          </Button>
+          {counter === 3 ? (
+            submitLoading ? (
+              <Button disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </Button>
+            ) : (
+              <Button type="submit" onClick={handleSubmit}>
+                Add Product
+              </Button>
+            )
+          ) : (
+            <Button onClick={() => setCounter(counter + 1)}>Continue</Button>
+          )}
+        </div>
+      </div>
       <div className="px-4">
         {counter === 0 ? (
           <BasicDetails
@@ -888,26 +920,6 @@ const AddNewStock = () => {
           </div>
         ) : (
           <ReviewProduct productData={productData} />
-        )}
-      </div>
-
-      <div className="w-full flex gap-2 justify-center bg-white py-2 mb-24 px-4">
-        <Button onClick={() => setCounter(counter - 1)} variant="secondary">
-          Previous
-        </Button>
-        {counter === 3 ? (
-          submitLoading ? (
-            <Button disabled>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Please wait
-            </Button>
-          ) : (
-            <Button type="submit" onClick={handleSubmit}>
-              Add Product
-            </Button>
-          )
-        ) : (
-          <Button onClick={() => setCounter(counter + 1)}>Continue</Button>
         )}
       </div>
     </div>
