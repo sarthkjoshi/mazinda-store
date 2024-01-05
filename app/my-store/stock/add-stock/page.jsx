@@ -67,6 +67,21 @@ const AddNewStock = () => {
     variantsInfo: {},
   });
 
+  function generateRandomAlphanumeric() {
+    const alphanumericCharacters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+
+    for (let i = 0; i < 10; i++) {
+      const randomIndex = Math.floor(
+        Math.random() * alphanumericCharacters.length
+      );
+      result += alphanumericCharacters.charAt(randomIndex);
+    }
+
+    return result;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitLoading(true);
@@ -77,7 +92,6 @@ const AddNewStock = () => {
         const productDataWithoutVariants = {
           ...productData,
           variants: {},
-          variantsInfo: {},
         };
 
         const { data } = await axios.post("/api/product/add-new-product", {
@@ -90,6 +104,7 @@ const AddNewStock = () => {
           toast.error(data.message, { autoClose: 3000 });
         }
       } else {
+        const variantId = generateRandomAlphanumeric();
         // Iterate over selected combinations for products with variants
         for (const combination of Object.keys(productData.variants)) {
           if (combination !== "0") {
@@ -108,6 +123,7 @@ const AddNewStock = () => {
               ],
               variantsInfo: selectedVariants,
               combinationName: combination,
+              variantId,
             };
 
             const { data } = await axios.post("/api/product/add-new-product", {

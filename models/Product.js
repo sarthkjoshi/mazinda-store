@@ -12,6 +12,7 @@ const ProductSchema = new mongoose.Schema(
     variants: { type: Object },
     variantsInfo: { type: Object },
     combinationName: { type: String },
+    variantId: { type: String },
     topDeal: { type: Boolean, default: false },
     trending: { type: Boolean, default: false },
     description: { type: Array },

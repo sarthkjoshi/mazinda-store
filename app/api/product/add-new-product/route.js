@@ -18,6 +18,7 @@ export async function POST(req) {
       variants,
       variantsInfo,
       combinationName,
+      variantId,
     } = productData;
 
     const storeData = jwt.verify(storeToken, "this is jwt secret");
@@ -25,19 +26,34 @@ export async function POST(req) {
 
     await connectDB();
 
-    await Product.create({
-      productName,
-      storeId,
-      category,
-      subcategory,
-      imagePaths,
-      pricing,
-      description,
-      tags,
-      variants,
-      variantsInfo,
-      combinationName,
-    });
+    if (Object.keys(productData.variants).length) {
+      await Product.create({
+        productName,
+        storeId,
+        category,
+        subcategory,
+        imagePaths,
+        pricing,
+        description,
+        tags,
+        variants,
+        variantsInfo,
+        combinationName,
+        variantId,
+      });
+    } else {
+      await Product.create({
+        productName,
+        storeId,
+        category,
+        subcategory,
+        imagePaths,
+        pricing,
+        description,
+        tags,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       message: "Product created successfully",
