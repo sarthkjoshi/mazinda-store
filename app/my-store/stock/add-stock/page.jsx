@@ -4,7 +4,7 @@ import BasicDetails from "@/components/add-product/BasicDetails";
 import ReviewProduct from "@/components/add-product/ReviewProduct";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Label } from "@/components/ui/label";
@@ -95,9 +95,8 @@ const AddNewStock = () => {
           if (combination !== "0") {
             const productDataForCombination = {
               ...productData,
-              productName: {
-                ...productData.variants[combination]?.productName,
-              },
+              productName: productData.variants[combination]?.productName,
+
               pricing: {
                 ...productData.variants[combination]?.pricing,
               },
@@ -170,7 +169,11 @@ const AddNewStock = () => {
         };
       } else {
         // Update the general productName
-        prevData.productName = value;
+        return {
+          ...prevData,
+          productName: value,
+          variants: { ...updatedVariants },
+        };
       }
 
       return {
@@ -453,7 +456,6 @@ const AddNewStock = () => {
                               />
                               <Button
                                 onClick={() => {
-                                  //   console.log(selectedVariants);
                                   selectedVariants[variantCategory] = [
                                     ...selectedVariants[variantCategory],
                                     variantInput,
@@ -889,7 +891,7 @@ const AddNewStock = () => {
         )}
       </div>
 
-      <div className="w-full flex gap-2 justify-center bg-white py-2 mb-20 px-4">
+      <div className="w-full flex gap-2 justify-center bg-white py-2 mb-24 px-4">
         <Button onClick={() => setCounter(counter - 1)} variant="secondary">
           Previous
         </Button>
