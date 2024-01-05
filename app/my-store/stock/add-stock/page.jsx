@@ -84,8 +84,6 @@ const AddNewStock = () => {
           productData: productDataWithoutVariants,
         });
 
-        console.log(data);
-
         if (data.success) {
           toast.success(data.message, { autoClose: 3000 });
         } else {
@@ -94,8 +92,6 @@ const AddNewStock = () => {
       } else {
         // Iterate over selected combinations for products with variants
         for (const combination of Object.keys(productData.variants)) {
-          console.log(combination);
-          console.log(typeof combination);
           if (combination !== "0") {
             const productDataForCombination = {
               ...productData,
@@ -109,6 +105,7 @@ const AddNewStock = () => {
                 ...(productData.variants[combination]?.imagePaths || []),
               ],
               variantsInfo: selectedVariants,
+              combinationName: combination,
             };
 
             const { data } = await axios.post("/api/product/add-new-product", {

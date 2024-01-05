@@ -17,6 +17,7 @@ export async function POST(req) {
       tags,
       variants,
       variantsInfo,
+      combinationName,
     } = productData;
 
     const storeData = jwt.verify(storeToken, "this is jwt secret");
@@ -35,6 +36,7 @@ export async function POST(req) {
       tags,
       variants,
       variantsInfo,
+      combinationName,
     });
     return NextResponse.json({
       success: true,
