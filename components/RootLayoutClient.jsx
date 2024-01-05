@@ -25,9 +25,9 @@ export default function RootLayoutClient({ children }) {
           theme="light"
         />
         {children}
-        <div className="absolute top-24">
+        {/* <div className="absolute top-24">
           <BackButton />
-        </div>
+        </div> */}
       </Provider>
     </>
   );

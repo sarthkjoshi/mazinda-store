@@ -15,35 +15,31 @@ export async function POST(req) {
       pricing,
       description,
       tags,
+      variants,
+      variantsInfo,
     } = productData;
 
     const storeData = jwt.verify(storeToken, "this is jwt secret");
     const storeId = storeData["id"];
 
     await connectDB();
-    let product = await Product.findOne({ storeId, productName });
 
-    if (!product) {
-      await Product.create({
-        productName,
-        storeId,
-        category,
-        subcategory,
-        imagePaths,
-        pricing,
-        description,
-        tags,
-      });
-      return NextResponse.json({
-        success: true,
-        message: "Product created successfully",
-      });
-    } else {
-      return NextResponse.json({
-        success: false,
-        message: "Product already exists",
-      });
-    }
+    await Product.create({
+      productName,
+      storeId,
+      category,
+      subcategory,
+      imagePaths,
+      pricing,
+      description,
+      tags,
+      variants,
+      variantsInfo,
+    });
+    return NextResponse.json({
+      success: true,
+      message: "Product created successfully",
+    });
   } catch (error) {
     return NextResponse.json({
       success: false,

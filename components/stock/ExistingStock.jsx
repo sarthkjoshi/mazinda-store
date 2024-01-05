@@ -51,18 +51,16 @@ const ExistingStock = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(productData);
 
     try {
-      const response = await axios.post("/api/product/add-new-product", {
+      const { data } = await axios.post("/api/product/add-new-product", {
         productData,
       });
-      console.log(response.data);
 
-      if (response.data.success) {
-        toast.success(response.data.message, { autoClose: 3000 });
+      if (data.success) {
+        toast.success(data.message, { autoClose: 3000 });
       } else {
-        toast.error(response.data.message, { autoClose: 3000 });
+        toast.error(data.message, { autoClose: 3000 });
       }
 
       setProductData({
@@ -196,23 +194,24 @@ const ExistingStock = () => {
             </div>
           </div>
 
-          {productData.description && productData.description.map((desc) => {
-            return (
-              <div className="mb-4" key={desc.heading}>
-                <label htmlFor="description" className="block font-medium">
-                  {desc.heading}
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows="4"
-                  className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                  value={desc.description}
-                  onChange={handleFieldChange}
-                />
-              </div>
-            );
-          })}
+          {productData.description &&
+            productData.description.map((desc) => {
+              return (
+                <div className="mb-4" key={desc.heading}>
+                  <label htmlFor="description" className="block font-medium">
+                    {desc.heading}
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                    value={desc.description}
+                    onChange={handleFieldChange}
+                  />
+                </div>
+              );
+            })}
 
           <div className="w-full flex justify-center">
             <button

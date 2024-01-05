@@ -9,6 +9,8 @@ const ProductSchema = new mongoose.Schema(
     subcategory: { type: String },
     imagePaths: { type: Array },
     tags: { type: Array },
+    variants: { type: Object },
+    variantsInfo: { type: Object },
     topDeal: { type: Boolean, default: false },
     trending: { type: Boolean, default: false },
     description: { type: Array },
