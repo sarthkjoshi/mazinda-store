@@ -934,6 +934,7 @@ const AddNewStock = () => {
                 </div>
               </div>
             )}
+            <div className="h-24 w-full"></div>
           </div>
         ) : (
           <ReviewProduct productData={productData} />
