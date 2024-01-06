@@ -461,6 +461,7 @@ const AddNewStock = () => {
                           <SelectItem value="storage">Storage</SelectItem>
                           <SelectItem value="ram">RAM</SelectItem>
                           <SelectItem value="flavour">Flavour</SelectItem>
+                          <SelectItem value="variant">Variant</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
