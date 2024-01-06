@@ -544,7 +544,7 @@ const AddNewStock = () => {
             {Object.keys(productData.variants).length ? (
               <div>
                 {generatedCombinations.length > 0 && (
-                  <div>
+                  <div className="mb-20">
                     <h2 className="mb-3 text-lg">Select Combinations</h2>
                     <ul className="flex flex-col gap-2">
                       {generatedCombinations.map((combination, index) => (
