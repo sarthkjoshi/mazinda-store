@@ -74,7 +74,9 @@ const CurrentOrders = () => {
                   </TableCell>
                   <TableCell>
                     {order.cart.map((item) => (
-                      <span className="text-sm block">{item.quantity}</span>
+                      <span key={item._id} className="text-sm block">
+                        {item.quantity}
+                      </span>
                     ))}
                   </TableCell>
                 </TableRow>

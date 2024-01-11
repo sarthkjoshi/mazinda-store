@@ -26,7 +26,7 @@ export async function POST(req) {
 
     await connectDB();
 
-    if (Object.keys(productData.variants).length) {
+    if (productData.variants && Object.keys(productData.variants).length) {
       await Product.create({
         productName,
         storeId,

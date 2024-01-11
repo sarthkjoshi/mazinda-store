@@ -2,11 +2,29 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ExistingStock = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const [productData, setProductData] = useState({
+    productName: "",
+    storeToken: Cookies.get("store_token"),
+    category: "",
+    subcategory: "",
+    imagePaths: [],
+    pricing: {
+      mrp: "",
+      costPrice: "",
+    },
+    description: "",
+    tags: [],
+  });
 
   const handleSearch = async () => {
     try {
@@ -33,21 +51,9 @@ const ExistingStock = () => {
         costPrice: product.pricing.costPrice,
       },
       description: product.description,
+      tags: product.tags,
     });
   };
-
-  const [productData, setProductData] = useState({
-    productName: "",
-    storeToken: Cookies.get("store_token"),
-    category: "",
-    subcategory: "",
-    imagePaths: [],
-    pricing: {
-      mrp: "",
-      costPrice: "",
-    },
-    description: "",
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +62,8 @@ const ExistingStock = () => {
       const { data } = await axios.post("/api/product/add-new-product", {
         productData,
       });
+
+      console.log(data);
 
       if (data.success) {
         toast.success(data.message, { autoClose: 3000 });
@@ -72,6 +80,7 @@ const ExistingStock = () => {
           costPrice: "",
         },
         description: "",
+        tags: [],
       });
     } catch (e) {
       toast.error(e.message, { autoClose: 3000 });
@@ -100,26 +109,19 @@ const ExistingStock = () => {
   return (
     <div className="p-2">
       {/* Search Bar */}
-      <div className="mb-4">
-        <label htmlFor="search" className="block font-medium">
-          Search for a Product:
-        </label>
-        <div className="flex">
-          <input
+      <div className="mb-4 flex flex-col gap-2">
+        <Label htmlFor="search">Search for a Product:</Label>
+        <div className="flex gap-2">
+          <Input
             type="text"
             id="search"
             name="search"
-            className="w-full px-2 border border-gray-300 rounded-full text-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button
-            type="button"
-            className="ml-2 bg-[#f17e13] px-4 py-2 text-white rounded-lg"
-            onClick={handleSearch}
-          >
+          <Button variant="secondary" onClick={handleSearch}>
             Search
-          </button>
+          </Button>
         </div>
 
         {/* Display search results */}
@@ -133,11 +135,16 @@ const ExistingStock = () => {
                   onClick={() => handleProductSelection(product)}
                   className="cursor-pointer text-gray-700 w-44 border rounded-lg m-3 flex flex-col items-center p-2"
                 >
-                  <img
-                    className="w-fit"
-                    src={product.imagePaths[0]}
-                    alt="Product"
-                  />
+                  <AspectRatio
+                    ratio={1 / 1}
+                    className="flex items-center justify-center"
+                  >
+                    <img
+                      className="rounded-lg h-[120px] md:h-[150px]"
+                      src={product.imagePaths[0]}
+                      alt="Product"
+                    />
+                  </AspectRatio>
                   <span>{product.productName.slice(0, 50)}...</span>
                   {/* <span className="text-[#f17e13] border border-[#f17e13] rounded-full px-4 text-sm font-bold my-2">Edit</span> */}
                 </li>
@@ -149,17 +156,14 @@ const ExistingStock = () => {
       {
         <form
           onSubmit={handleSubmit}
-          className={`text-sm ${!selectedProduct ? "hidden" : "block"}`}
+          className={`mt-5 text-sm ${!selectedProduct ? "hidden" : "block"}`}
         >
           <div className="mb-4">
-            <label htmlFor="productName" className="block font-medium">
-              Product Name:
-            </label>
-            <input
+            <Label htmlFor="productName">Product Name:</Label>
+            <Input
               type="text"
               id="productName"
               name="productName"
-              className="w-full px-2 py-1 border border-gray-300 rounded-full"
               value={productData.productName}
               onChange={handleFieldChange}
             />
@@ -167,27 +171,21 @@ const ExistingStock = () => {
 
           <div className="flex justify-between">
             <div className="mb-4 mx-1">
-              <label htmlFor="mrp" className="block font-medium">
-                MRP:
-              </label>
-              <input
+              <Label htmlFor="mrp">MRP:</Label>
+              <Input
                 type="text"
                 id="mrp"
                 name="mrp"
-                className="w-full px-2 py-1 border border-gray-300 rounded-full"
                 value={productData.pricing.mrp}
                 onChange={handlePricingChange}
               />
             </div>
             <div className="mb-4 mx-1">
-              <label htmlFor="costPrice" className="block font-medium">
-                Cost Price:
-              </label>
-              <input
+              <Label htmlFor="costPrice">Cost Price:</Label>
+              <Input
                 type="text"
                 id="costPrice"
                 name="costPrice"
-                className="w-full px-2 py-1 border border-gray-300 rounded-full"
                 value={productData.pricing.costPrice}
                 onChange={handlePricingChange}
               />
@@ -198,9 +196,7 @@ const ExistingStock = () => {
             productData.description.map((desc) => {
               return (
                 <div className="mb-4" key={desc.heading}>
-                  <label htmlFor="description" className="block font-medium">
-                    {desc.heading}
-                  </label>
+                  <Label htmlFor="description">{desc.heading}</Label>
                   <textarea
                     id="description"
                     name="description"
@@ -214,12 +210,7 @@ const ExistingStock = () => {
             })}
 
           <div className="w-full flex justify-center">
-            <button
-              type="submit"
-              className="bg-[#f17e13] text-white px-4 py-1 rounded-full hover:opacity-75"
-            >
-              Add Stock
-            </button>
+            <Button type="submit">Add Stock</Button>
             {/* <button
               className="bg-white border border-[#f17e13] mx-2 text-[#f17e13] px-4 py-1 rounded-full hover:opacity-75"
               onClick={() => {
