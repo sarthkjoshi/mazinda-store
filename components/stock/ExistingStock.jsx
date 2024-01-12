@@ -4,13 +4,16 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const ExistingStock = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [productData, setProductData] = useState({
     productName: "",
@@ -25,8 +28,16 @@ const ExistingStock = () => {
     description: "",
     tags: [],
   });
+  const [editedDescription, setEditedDescription] = useState([]);
+
+  const handleDescriptionChange = (index, field, event) => {
+    const newDescription = [...editedDescription];
+    newDescription[index][field] = event.target.value;
+    setEditedDescription(newDescription);
+  };
 
   const handleSearch = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.post("/api/product/fetch-search-products", {
         searchQuery: searchTerm,
@@ -35,6 +46,8 @@ const ExistingStock = () => {
       setSearchResults(data.products);
     } catch (error) {
       console.error("Error searching products:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,6 +66,7 @@ const ExistingStock = () => {
       description: product.description,
       tags: product.tags,
     });
+    setEditedDescription(product.description);
   };
 
   const handleSubmit = async (e) => {
@@ -60,10 +74,8 @@ const ExistingStock = () => {
 
     try {
       const { data } = await axios.post("/api/product/add-new-product", {
-        productData,
+        productData: { ...productData, description: editedDescription },
       });
-
-      console.log(data);
 
       if (data.success) {
         toast.success(data.message, { autoClose: 3000 });
@@ -119,9 +131,16 @@ const ExistingStock = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Button variant="secondary" onClick={handleSearch}>
-            Search
-          </Button>
+          {loading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button variant="secondary" onClick={handleSearch}>
+              Search
+            </Button>
+          )}
         </div>
 
         {/* Display search results */}
@@ -192,7 +211,7 @@ const ExistingStock = () => {
             </div>
           </div>
 
-          {productData.description &&
+          {/* {productData.description &&
             productData.description.map((desc) => {
               return (
                 <div className="mb-4" key={desc.heading}>
@@ -207,7 +226,28 @@ const ExistingStock = () => {
                   />
                 </div>
               );
-            })}
+            })} */}
+
+          <div>
+            <Label className="font-semibold">Description:</Label>
+            {editedDescription.map((desc, index) => (
+              <div
+                key={index}
+                className="border flex flex-col p-2 rounded-md mb-2 gap-2"
+              >
+                <Input
+                  value={desc.heading}
+                  onChange={(e) => handleDescriptionChange(index, "heading", e)}
+                />
+                <Textarea
+                  value={desc.description}
+                  onChange={(e) =>
+                    handleDescriptionChange(index, "description", e)
+                  }
+                />
+              </div>
+            ))}
+          </div>
 
           <div className="w-full flex justify-center">
             <Button type="submit">Add Stock</Button>
