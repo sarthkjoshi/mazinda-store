@@ -32,7 +32,7 @@ export async function PUT(req) {
       });
     }
 
-    delete product.pricing.specialPrice;
+    delete product?.pricing?.specialPrice;
     await product.save();
 
     return NextResponse.json({
