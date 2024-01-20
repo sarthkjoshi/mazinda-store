@@ -54,15 +54,25 @@ const BasicDetails = ({ productData, setProductData }) => {
     fetchCategoriesAndSubcategories();
   }, [productData.category]);
 
+  // const handleTagsChange = (e) => {
+  //   const newTags = e.target.value
+  //     .replace(/ /g, "")
+  //     .split(",")
+  //     .map((tag) => tag.trim());
+  //   setProductData((prevData) => ({
+  //     ...prevData,
+  //     tags: newTags,
+  //   }));
+  // };
+  
   const handleTagsChange = (e) => {
     const newTags = e.target.value
-      .replace(/ /g, "")
-      .split(",")
-      .map((tag) => tag.trim());
-    setProductData((prevData) => ({
-      ...prevData,
-      tags: newTags,
-    }));
+        .split(",")
+        .map((tag) => tag.trimStart());
+        setProductData((prevData) => ({
+          ...prevData,
+          tags: newTags,
+        }));
   };
 
   const handleRemoveTag = (tag) => {
