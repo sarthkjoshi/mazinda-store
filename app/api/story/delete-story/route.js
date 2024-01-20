@@ -1,5 +1,5 @@
 import Story from "@/models/Story";
-import connectDB from "@/lib/mongoose";
+import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 
