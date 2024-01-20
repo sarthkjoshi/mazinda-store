@@ -1,4 +1,5 @@
 import Story from "@/models/Story";
+import Product from "@/models/Product";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
 
@@ -9,8 +10,20 @@ export async function POST(req) {
 
     await connectDB();
 
+    const fetchedProduct = await Product.findById(product._id);
+
+    if (!fetchedProduct) {
+      return NextResponse.json({
+        success: false,
+        error: "An error occurred while adding the story, product not found",
+      });
+    }
+
+    fetchedProduct.pricing.specialPrice = specialPrice;
+    await fetchedProduct.save();
+
     await Story.create({
-      product,
+      product: fetchedProduct,
       storeDetails,
       specialPrice,
       isSponsored,
