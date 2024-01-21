@@ -9,6 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/router";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import {
   Table,
@@ -25,6 +38,7 @@ const ProductDetails = () => {
   const [editedDescription, setEditedDescription] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
 
@@ -70,6 +84,16 @@ const ProductDetails = () => {
 
   const handleEditClick = () => {
     setIsEditing(true);
+  };
+
+  const handleProductDelete = async (_id) => {
+    const { data } = await axios.put("/api/product/delete", { _id });
+    if (data.success) {
+      toast.success("Product deleted successfully");
+      router.push("/my-store/products");
+    } else {
+      toast.error("Error deleting the product");
+    }
   };
 
   const handleSaveClick = async () => {
@@ -232,13 +256,42 @@ const ProductDetails = () => {
                 />
               </div>
 
-              <Button
-                variant="secondary"
-                className="self-end"
-                onClick={handleEditClick}
-              >
-                Edit
-              </Button>
+              <div className="flex gap-2 mt-4">
+                <AlertDialog>
+                  <AlertDialogTrigger>
+                    <Button variant="destructive">Delete</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete the product.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction className="px-0">
+                        <Button
+                          onClick={() => handleProductDelete(productData._id)}
+                          variant="destructive"
+                        >
+                          Continue
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <Button
+                  className="px-7"
+                  variant="secondary"
+                  onClick={handleEditClick}
+                >
+                  Edit
+                </Button>
+              </div>
 
               <Table className="mt-3">
                 <TableHeader>
