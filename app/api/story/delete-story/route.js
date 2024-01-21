@@ -10,30 +10,41 @@ export async function PUT(req) {
     // Connecting to database
     await connectDB();
 
+    // Find and delete the story
     const story = await Story.findByIdAndDelete(story_id);
 
     if (!story) {
       return NextResponse.json({
         success: false,
         error:
-          "An error occurred while deleting the story, story doesn't exist : " +
-          error,
+          "An error occurred while deleting the story, story doesn't exist",
       });
     }
 
+    // Find the associated product
     const product = await Product.findById(story.product._id);
 
-    if (!story) {
+    if (!product) {
       return NextResponse.json({
         success: false,
         error:
-          "An error occurred while deleting the story, product doesn't exist : " +
-          error,
+          "An error occurred while deleting the story, product doesn't exist",
       });
     }
 
-    delete product?.pricing?.specialPrice;
-    await product.save();
+    // Update the product to unset the specialPrice field
+    const saveResult = await Product.findByIdAndUpdate(
+      product._id,
+      { $unset: { "pricing.specialPrice": 1 } },
+      { new: true }
+    );
+
+    if (!saveResult) {
+      return NextResponse.json({
+        success: false,
+        error: "An error occurred while updating the product",
+      });
+    }
 
     return NextResponse.json({
       success: true,
@@ -42,7 +53,7 @@ export async function PUT(req) {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: "An error occurred while deleting the story : " + error,
+      error: "An error occurred while deleting the story: " + error,
     });
   }
 }
