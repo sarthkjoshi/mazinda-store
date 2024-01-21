@@ -10,8 +10,14 @@ export async function POST(req) {
 
     await connectDB();
 
-    const fetchedProduct = await Product.findById(product._id);
+    // Fetch the product and update the specialPrice field
+    const fetchedProduct = await Product.findByIdAndUpdate(
+      product._id,
+      { $set: { "pricing.specialPrice": specialPrice } },
+      { new: true } // This option returns the modified document
+    );
 
+    // Check if the product was found
     if (!fetchedProduct) {
       return NextResponse.json({
         success: false,
@@ -19,9 +25,7 @@ export async function POST(req) {
       });
     }
 
-    fetchedProduct.pricing.specialPrice = specialPrice;
-    await fetchedProduct.save();
-
+    // Create the Story with the updated product details
     await Story.create({
       product: fetchedProduct,
       storeDetails,
