@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import OvalLoader from "@/components/utility/OvalLoader";
 import MazindaLogoFull from "@/public/logo_mazinda.png";
@@ -15,11 +15,13 @@ const Loading = () => {
         />
         <div className="bg-white rounded-lg p-8 max-w-md w-full">
           <h1 className="text-3xl font-semibold text-center mb-6">
-            Hang On ... 
+            Hang On ...
           </h1>
         </div>
 
-        <div className="flex items-center justify-center"><OvalLoader /></div>
+        <div className="flex items-center justify-center">
+          <OvalLoader />
+        </div>
       </div>
     </>
   );

@@ -5,7 +5,6 @@ import store from "@/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide } from "react-toastify";
-import BackButton from "@/components/utility/BackButton";
 
 export default function RootLayoutClient({ children }) {
   return (
@@ -25,9 +24,6 @@ export default function RootLayoutClient({ children }) {
           theme="light"
         />
         {children}
-        {/* <div className="absolute top-24">
-          <BackButton />
-        </div> */}
       </Provider>
     </>
   );

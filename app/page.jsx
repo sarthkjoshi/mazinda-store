@@ -28,7 +28,7 @@ const StoreDashboard = () => {
           const approvalStatus = data.store.approvedStatus;
 
           if (approvalStatus === "approved") {
-            router.push("/my-store");
+            router.push(`/my-store`);
           } else if (approvalStatus === "pending") {
             console.log(
               "Your request for store approval is currently pending. You will be notified once it is approved."
