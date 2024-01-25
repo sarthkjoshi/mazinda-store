@@ -4,7 +4,7 @@ import BasicDetails from "@/components/add-product/BasicDetails";
 import ReviewProduct from "@/components/add-product/ReviewProduct";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useSelector } from "react-redux";
 
 import {
   Select,
@@ -42,6 +43,7 @@ import {
 } from "@/components/ui/accordion";
 
 const AddNewStock = () => {
+  const store = useSelector((state) => state.store.store);
   const [counter, setCounter] = useState(0);
   const [selectedVariantCategory, setSelectedVariantCategory] = useState("");
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -66,6 +68,10 @@ const AddNewStock = () => {
     variants: {},
     variantsInfo: {},
   });
+
+  useEffect(() => {
+    console.log(productData);
+  }, [productData]);
 
   function generateRandomAlphanumeric() {
     const alphanumericCharacters =
@@ -177,6 +183,7 @@ const AddNewStock = () => {
           imagePaths: [],
           description: [],
           pricing: {},
+          minQuantity: 1,
         };
 
         updatedVariants[combination] = {
@@ -188,6 +195,39 @@ const AddNewStock = () => {
         return {
           ...prevData,
           productName: value,
+          variants: { ...updatedVariants },
+        };
+      }
+
+      return {
+        ...prevData,
+        variants: { ...updatedVariants },
+      };
+    });
+  };
+
+  const handleProductQtyChange = (e, combination) => {
+    const { value } = e.target;
+
+    setProductData((prevData) => {
+      const updatedVariants = { ...prevData.variants };
+
+      if (combination) {
+        const combinationData = updatedVariants[combination] || {
+          imagePaths: [],
+          description: [],
+          pricing: {},
+          minQuantity: 1,
+        };
+
+        updatedVariants[combination] = {
+          ...combinationData,
+          minQuantity: value,
+        };
+      } else {
+        return {
+          ...prevData,
+          minQuantity: value,
           variants: { ...updatedVariants },
         };
       }
@@ -677,6 +717,29 @@ const AddNewStock = () => {
                                   </div>
                                 )}
                               </div>
+
+                              {store.businessType.includes("b2c") ? (
+                                <div className="mt-4 flex flex-col gap-1">
+                                  <Label
+                                    htmlFor="minQuantity"
+                                    className="block font-medium"
+                                  >
+                                    Minimum Quantity for {combination}
+                                  </Label>
+                                  <Input
+                                    type="text"
+                                    id="minQuantity"
+                                    name="minQuantity"
+                                    value={
+                                      productData.variants[combination]
+                                        .minQuantity || 1
+                                    }
+                                    onChange={(e) =>
+                                      handleProductQtyChange(e, combination)
+                                    }
+                                  />
+                                </div>
+                              ) : null}
 
                               <div className="mt-10">
                                 <Label className="text-md">

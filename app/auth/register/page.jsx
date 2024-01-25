@@ -9,6 +9,10 @@ import MazindaLogoFull from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const RegisterStorePage = () => {
   const router = useRouter();
@@ -19,6 +23,8 @@ const RegisterStorePage = () => {
     address: "",
     city: "",
     pincode: "",
+    businessType: [],
+    gstin: "",
     mobileNumber: "",
     alternateMobileNumber: "",
     email: "",
@@ -56,183 +62,245 @@ const RegisterStorePage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen my-4">
       <Image className="my-4" src={MazindaLogoFull} alt="mazinda" />
-      <div className="max-w-md w-full p-2 bg-white rounded-lg">
+      <div className="max-w-xl w-full p-2 bg-white rounded-lg">
         <h1 className="mb-1 text-center font-bold text-4xl">Register Store</h1>
         <div className="flex items-center justify-center mb-4">
           <p className="inline text-center text-gray-600">
             Or{" "}
-            <Link
-              href="/auth/login"
-              className="text-gray-600 hover:underline"
-            >
+            <Link href="/auth/login" className="text-gray-600 hover:underline">
               Log in to store
             </Link>
           </p>
         </div>
         <form onSubmit={handleSubmit} className="p-10">
           <div className="mb-4">
-            <label htmlFor="ownerName" className="block font-bold mb-1">
+            <Label htmlFor="ownerName" className="block font-bold mb-1">
               Owner's Name
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               id="ownerName"
               name="ownerName"
-              className="w-full px-5 py-1 border rounded-full"
               placeholder="Enter owner's name"
               value={formData.ownerName}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="storeName" className="block font-bold mb-1">
+            <Label htmlFor="storeName" className="block font-bold mb-1">
               Store Name
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               id="storeName"
               name="storeName"
-              className="w-full px-5 py-1 border rounded-full"
               placeholder="Enter store name"
               value={formData.storeName}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="address" className="block font-bold mb-1">
+            <Label htmlFor="address" className="block font-bold mb-1">
               Store Address
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               id="address"
               name="address"
-              className="w-full px-5 py-1 border rounded-full"
               placeholder="Enter store address"
               value={formData.address}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="mb-4 flex">
             <div className="w-1/2 mr-2">
-              <label htmlFor="city" className="block font-bold mb-1">
+              <Label htmlFor="city" className="block font-bold mb-1">
                 City
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 id="city"
                 name="city"
-                className="w-full px-5 py-1 border rounded-full"
                 placeholder="City"
                 value={formData.city}
                 onChange={handleInputChange}
+                required
               />
             </div>
             <div className="w-1/2 ml-2">
-              <label htmlFor="pincode" className="block font-bold mb-1">
+              <Label htmlFor="pincode" className="block font-bold mb-1">
                 Pincode
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 id="pincode"
                 name="pincode"
-                className="w-full px-5 py-1 border rounded-full"
                 placeholder="Pincode"
                 value={formData.pincode}
                 onChange={handleInputChange}
+                required
               />
             </div>
           </div>
+
+          <div className="my-5">
+            <Label className="block font-bold mb-1">Business Type</Label>
+
+            <div className="flex items-center space-x-2 mt-3 mb-2">
+              <Checkbox
+                id="b2c"
+                checked={formData.businessType.includes("b2c")}
+                onCheckedChange={() => {
+                  setFormData({
+                    ...formData,
+                    businessType: formData.businessType.includes("b2c")
+                      ? formData.businessType.filter((type) => type !== "b2c")
+                      : [...formData.businessType, "b2c"],
+                  });
+                }}
+              />
+              <label
+                htmlFor="b2c"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Business To Customer
+              </label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="b2b"
+                checked={formData.businessType.includes("b2b")}
+                onCheckedChange={() => {
+                  setFormData({
+                    ...formData,
+                    businessType: formData.businessType.includes("b2b")
+                      ? formData.businessType.filter((type) => type !== "b2b")
+                      : [...formData.businessType, "b2b"],
+                  });
+                }}
+              />
+              <label
+                htmlFor="b2b"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Business To Business
+              </label>
+            </div>
+          </div>
+
+          {formData.businessType.includes("b2b") ? (
+            <div className="mb-4">
+              <Label htmlFor="email" className="block font-bold mb-1">
+                GSTIN
+              </Label>
+              <Input
+                type="text"
+                id="gstin"
+                name="gstin"
+                placeholder="Enter the GST Number of the business"
+                value={formData.gstin}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+          ) : null}
+
           <div className="mb-4 flex">
             <div className="w-1/2 mr-2">
-              <label htmlFor="mobileNumber" className="block font-bold mb-1">
+              <Label htmlFor="mobileNumber" className="block font-bold mb-1">
                 Mobile Number
-              </label>
-              <input
-                type="text"
+              </Label>
+              <Input
+                type="tel"
                 id="mobileNumber"
                 name="mobileNumber"
-                className="w-full px-5 py-1 border rounded-full"
                 value={formData.mobileNumber}
                 onChange={handleInputChange}
+                required
               />
             </div>
             <div className="w-1/2 ml-2">
-              <label
+              <Label
                 htmlFor="alternateMobileNumber"
                 className="block font-bold mb-1"
               >
                 Alternate Phone
-              </label>
-              <input
-                type="text"
+              </Label>
+              <Input
+                type="tel"
                 id="alternateMobileNumber"
                 name="alternateMobileNumber"
-                className="w-full px-5 py-1 border rounded-full"
                 value={formData.alternateMobileNumber}
                 onChange={handleInputChange}
+                required
               />
             </div>
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block font-bold mb-1">
+            <Label htmlFor="email" className="block font-bold mb-1">
               Email
-            </label>
-            <input
+            </Label>
+            <Input
               type="email"
               id="email"
               name="email"
-              className="w-full px-5 py-1 border rounded-full"
               placeholder="Enter email"
               value={formData.email}
               onChange={handleInputChange}
+              required
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block font-bold mb-1">
+            <Label htmlFor="password" className="block font-bold mb-1">
               Password
-            </label>
-            <input
+            </Label>
+            <Input
               type="password"
               id="password"
               name="password"
-              className="w-full px-5 py-1 border rounded-full"
               placeholder="Enter password"
               value={formData.password}
               onChange={handleInputChange}
+              required
             />
           </div>
-          <div className="mb-4">
-            <label className="flex items-center cursor-pointer">
-              <input
+          <div className="my-12">
+            <Label className="flex items-center cursor-pointer">
+              <Input
                 type="checkbox"
                 id="acceptTerms"
                 name="acceptTerms"
                 className="form-checkbox text-blue-500 h-5 w-5"
                 checked={formData.acceptTerms}
                 onChange={handleInputChange}
+                required
               />
               <span className="ml-2 text-gray-700">
                 I accept the Terms and Conditions
               </span>
-            </label>
+            </Label>
           </div>
           <div className="mb-4">
-            <button
+            <Button
               disabled={!formData.acceptTerms}
               type="submit"
               className={`w-full ${
-                formData.acceptTerms ? "bg-[#fe6321]" : "bg-gray-600"
+                formData.acceptTerms ? "bg-[#fe6321]" : "bg-gray-300"
               } text-white font-bold py-2 px-4 rounded-full ${
                 formData.acceptTerms ? "hover:opacity-70" : ""
               }`}
             >
               {isSubmitting ? <OvalLoader /> : "Register"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
       <footer className="mt-8 text-center text-gray-500">
-        &copy; 20xx-20xx All Rights Reserved | Privacy Policy | Terms of Service
+        &copy; 2024 All Rights Reserved | Privacy Policy | Terms of Service
       </footer>
     </div>
   );

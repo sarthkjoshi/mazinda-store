@@ -9,6 +9,8 @@ import axios from "axios";
 import OvalLoader from "@/components/utility/OvalLoader";
 import MazindaLogoFull from "@/public/logo_mazinda.png";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   let router;
@@ -79,11 +81,10 @@ const LoginPage = () => {
             >
               Email or Phone
             </label>
-            <input
+            <Input
               type="text"
               id="identifier"
               name="identifier"
-              className="w-full px-5 py-2 border rounded-full"
               placeholder="Enter your email or phone"
               value={credentials.identifier}
               onChange={handleInputChange}
@@ -96,11 +97,10 @@ const LoginPage = () => {
             >
               Password
             </label>
-            <input
+            <Input
               type="password"
               id="password"
               name="password"
-              className="w-full px-5 py-2 border rounded-full"
               placeholder="Enter your password"
               value={credentials.password}
               onChange={handleInputChange}
@@ -112,17 +112,14 @@ const LoginPage = () => {
             </a>
           </div>
           <div className="mb-4">
-            <button
-              type="submit"
-              className="w-full bg-black text-white font-bold py-2 px-4 rounded-full hover:opacity-70"
-            >
+            <Button type="submit" className="w-full font-bold hover:opacity-70">
               {submitting ? <OvalLoader /> : "Login"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
       <footer className="mt-8 text-center text-gray-500">
-        &copy; 20xx-20xx All Rights Reserved | Privacy Policy | Terms of Service
+        &copy; 2024 All Rights Reserved | Privacy Policy | Terms of Service
       </footer>
     </div>
   );
