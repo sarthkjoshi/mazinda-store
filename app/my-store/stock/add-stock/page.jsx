@@ -49,7 +49,7 @@ const AddNewStock = () => {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [variantInput, setVariantInput] = useState("");
 
-  const [file, setFile] = useState();
+  const [files, setFiles] = useState();
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -69,9 +69,9 @@ const AddNewStock = () => {
     variantsInfo: {},
   });
 
-  useEffect(() => {
-    console.log(productData);
-  }, [productData]);
+  // useEffect(() => {
+  //   console.log(productData);
+  // }, [productData]);
 
   function generateRandomAlphanumeric() {
     const alphanumericCharacters =
@@ -161,7 +161,7 @@ const AddNewStock = () => {
         variants: {},
         variantsInfo: {},
       });
-      setFile(null);
+      setFiles(null);
       setCounter(0);
       setSelectedVariants({});
     } catch (error) {
@@ -315,60 +315,74 @@ const AddNewStock = () => {
     e.preventDefault();
     setUploadLoading(true);
 
-    if (!file) return;
+    if (!files || files.length === 0) return;
 
     try {
-      const data = new FormData();
-      data.append("file", file);
+        const data = new FormData();
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: data,
-      });
-
-      const json = await res.json();
-
-      if (!json.success) {
-        throw new Error(await res.text());
-      }
-
-      const filePath = json.location;
-      toast.success("Image uploaded successfully");
-
-      setProductData((prevData) => {
-        const updatedVariants = { ...prevData.variants };
-
-        if (combination) {
-          // Update the specific combination's imagePaths
-          const combinationData = updatedVariants[combination] || {
-            imagePaths: [],
-            description: [],
-            pricing: {},
-          };
-
-          updatedVariants[combination] = {
-            ...combinationData,
-            imagePaths: [...combinationData.imagePaths, filePath],
-          };
-        } else {
-          // Update the general imagePaths
-          prevData.imagePaths = [...prevData.imagePaths, filePath];
+        // Append each file to the FormData
+        for (const file of files) {
+            data.append('file', file);
         }
 
-        return {
-          ...prevData,
-          variants: { ...updatedVariants },
-        };
-      });
+        const res = await fetch("/api/upload", {
+            method: "POST",
+            body: data,
+        });
 
-      setFile(null);
+        const json = await res.json();
+
+        if (!json.success) {
+            throw new Error(await res.text());
+        }
+
+        console.log("json"+JSON.stringify(json));
+
+        // return
+
+        const fileLocations = json.locations;
+        toast.success("Images uploaded successfully");
+
+        setProductData((prevData) => {
+          const updatedVariants = { ...prevData.variants };
+      
+          if (combination) {
+              // Update the specific combination's imagePaths
+              const combinationData = updatedVariants[combination] || {
+                  imagePaths: [],
+                  description: [],
+                  pricing: {},
+              };
+      
+              const uniqueImagePaths = Array.from(new Set([...combinationData.imagePaths, ...fileLocations]));
+      
+              updatedVariants[combination] = {
+                  ...combinationData,
+                  imagePaths: uniqueImagePaths,
+              };
+          } else {
+              // Update the general imagePaths
+              const uniqueImagePaths = Array.from(new Set([...prevData.imagePaths, ...fileLocations]));
+      
+              prevData.imagePaths = uniqueImagePaths;
+          }
+      
+          return {
+              ...prevData,
+              variants: { ...updatedVariants },
+          };
+      });
+      
+
+        setFiles([]); // Reset the files array
     } catch (error) {
-      console.error(error);
-      toast.error("Error uploading image");
+        console.error(error);
+        toast.error("Error uploading images");
     } finally {
-      setUploadLoading(false);
+        setUploadLoading(false);
     }
-  };
+};
+
 
   const generateCombinations = () => {
     const combinations = [];
@@ -656,7 +670,8 @@ const AddNewStock = () => {
                                 <Input
                                   id="file"
                                   type="file"
-                                  onChange={(e) => setFile(e.target.files?.[0])}
+                                  multiple
+                                  onChange={(e) => setFiles(e.target.files)}
                                 />
 
                                 {uploadLoading ? (
@@ -670,7 +685,7 @@ const AddNewStock = () => {
                                       onFileSubmit(e, combination)
                                     }
                                     disabled={
-                                      !file ||
+                                      !files ||
                                       uploadLoading ||
                                       productData.variants[combination]
                                         .imagePaths.length >= 10
@@ -879,7 +894,8 @@ const AddNewStock = () => {
                     <Input
                       id="file"
                       type="file"
-                      onChange={(e) => setFile(e.target.files?.[0])}
+                      multiple
+                      onChange={(e) => setFiles(e.target.files)}
                     />
 
                     {uploadLoading ? (
@@ -891,7 +907,7 @@ const AddNewStock = () => {
                       <Button
                         onClick={onFileSubmit}
                         disabled={
-                          !file ||
+                          !files ||
                           uploadLoading ||
                           productData.imagePaths.length >= 10
                         }

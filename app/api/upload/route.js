@@ -3,40 +3,47 @@ import AWS from 'aws-sdk';
 
 export async function POST(request) {
     const data = await request.formData();
-    const file = data.get('file');
+    const files = data.getAll('file'); // Use getAll to get an array of all files
 
-    if (!file) {
-        return NextResponse.json({ success: false, error: 'No file provided' });
+    if (!files || files.length === 0) {
+        return NextResponse.json({ success: false, error: 'No files provided' });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
     const bucketName = 'mazindabucket';
+    const uploadedFiles = [];
+    const locations = [];
 
     try {
         const s3 = new AWS.S3();
 
-        // Generate a timestamp for the file name
-        const currentDate = new Date();
-        const timestamp = currentDate.toISOString().replace(/[:.]/g, '');
+        for (const file of files) {
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
 
-        const fileNameWithTimestamp = `${timestamp}_${file.name}`;
+            // Generate a timestamp for the file name
+            const currentDate = new Date();
+            const timestamp = currentDate.toISOString().replace(/[:.]/g, '');
 
-        const params = {
-            Bucket: bucketName,
-            Key: fileNameWithTimestamp, // Use the new filename
-            Body: buffer,
-        };
+            const fileNameWithTimestamp = `${timestamp}_${file.name}`;
 
-        // Using promises instead of callbacks for the S3 upload
-        const data = await s3.upload(params).promise();
+            const params = {
+                Bucket: bucketName,
+                Key: fileNameWithTimestamp, // Use the new filename
+                Body: buffer,
+            };
 
-        console.log('File uploaded successfully', data.Location);
+            // Using promises instead of callbacks for the S3 upload
+            const uploadResult = await s3.upload(params).promise();
 
-        return NextResponse.json({ success: true, fileName: fileNameWithTimestamp, location: data.Location });
+            console.log('File uploaded successfully', uploadResult.Location);
+
+            uploadedFiles.push({ fileName: fileNameWithTimestamp, location: uploadResult.Location });
+            locations.push(uploadResult.Location)
+        }
+
+        return NextResponse.json({ success: true, uploadedFiles, locations });
     } catch (error) {
-        console.error('Error uploading file:', error);
-        return NextResponse.json({ success: false, error: 'Error uploading file' });
+        console.error('Error uploading files:', error);
+        return NextResponse.json({ success: false, error: 'Error uploading files' });
     }
 }
