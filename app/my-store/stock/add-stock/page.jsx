@@ -947,7 +947,7 @@ const AddNewStock = () => {
 
                 <div className="mt-10">
                   <Label className="text-md">Product Pricing Details</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div className="grid grid-cols-3 gap-2 mt-2">
                     <div className="mb-4 flex flex-col gap-1">
                       <Label htmlFor="mrp">MRP:</Label>
                       <Input
@@ -965,6 +965,16 @@ const AddNewStock = () => {
                         id="costPrice"
                         name="costPrice"
                         value={productData.pricing.costPrice}
+                        onChange={handlePricingChange}
+                      />
+                    </div>
+                    <div className="mb-4 flex flex-col gap-1">
+                      <Label htmlFor="salesPrice">Selling Price(Optional):</Label>
+                      <Input
+                        type="text"
+                        id="salesPrice"
+                        name="salesPrice"
+                        value={productData.pricing.salesPrice}
                         onChange={handlePricingChange}
                       />
                     </div>

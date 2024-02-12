@@ -161,7 +161,7 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block font-semibold">MRP:</label>
                   <Input
@@ -177,6 +177,15 @@ const ProductDetails = () => {
                     type="text"
                     name="pricing.costPrice"
                     value={productData.pricing.costPrice}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold">Selling Price(Optional):</label>
+                  <Input
+                    type="text"
+                    name="pricing.salesPrice"
+                    value={productData.pricing.salesPrice}
                     onChange={handleChange}
                   />
                 </div>
@@ -300,6 +309,7 @@ const ProductDetails = () => {
                     <TableHead>Category</TableHead>
                     <TableHead>MRP</TableHead>
                     <TableHead className="">Cost Price</TableHead>
+                    <TableHead className="">Selling Price</TableHead>
                   </TableRow>
                 </TableHeader>
 
@@ -311,6 +321,7 @@ const ProductDetails = () => {
                     <TableCell>{productData.category}</TableCell>
                     <TableCell>{productData.pricing.mrp}</TableCell>
                     <TableCell>{productData.pricing.costPrice}</TableCell>
+                    <TableCell>{productData.pricing.salesPrice}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
