@@ -49,7 +49,7 @@ const AddNewStock = () => {
   const [selectedVariants, setSelectedVariants] = useState({});
   const [variantInput, setVariantInput] = useState("");
 
-  const [file, setFile] = useState();
+  const [files, setFiles] = useState();
   const [uploadLoading, setUploadLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -68,6 +68,10 @@ const AddNewStock = () => {
     variants: {},
     variantsInfo: {},
   });
+
+  // useEffect(() => {
+  //   console.log(productData);
+  // }, [productData]);
 
   function generateRandomAlphanumeric() {
     const alphanumericCharacters =
@@ -157,7 +161,7 @@ const AddNewStock = () => {
         variants: {},
         variantsInfo: {},
       });
-      setFile(null);
+      setFiles(null);
       setCounter(0);
       setSelectedVariants({});
     } catch (error) {
@@ -311,11 +315,15 @@ const AddNewStock = () => {
     e.preventDefault();
     setUploadLoading(true);
 
-    if (!file) return;
+    if (!files || files.length === 0) return;
 
     try {
       const data = new FormData();
-      data.append("file", file);
+
+      // Append each file to the FormData
+      for (const file of files) {
+        data.append("file", file);
+      }
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -328,8 +336,12 @@ const AddNewStock = () => {
         throw new Error(await res.text());
       }
 
-      const filePath = json.location;
-      toast.success("Image uploaded successfully");
+      console.log("json" + JSON.stringify(json));
+
+      // return
+
+      const fileLocations = json.locations;
+      toast.success("Images uploaded successfully");
 
       setProductData((prevData) => {
         const updatedVariants = { ...prevData.variants };
@@ -342,13 +354,21 @@ const AddNewStock = () => {
             pricing: {},
           };
 
+          const uniqueImagePaths = Array.from(
+            new Set([...combinationData.imagePaths, ...fileLocations])
+          );
+
           updatedVariants[combination] = {
             ...combinationData,
-            imagePaths: [...combinationData.imagePaths, filePath],
+            imagePaths: uniqueImagePaths,
           };
         } else {
           // Update the general imagePaths
-          prevData.imagePaths = [...prevData.imagePaths, filePath];
+          const uniqueImagePaths = Array.from(
+            new Set([...prevData.imagePaths, ...fileLocations])
+          );
+
+          prevData.imagePaths = uniqueImagePaths;
         }
 
         return {
@@ -357,10 +377,10 @@ const AddNewStock = () => {
         };
       });
 
-      setFile(null);
+      setFiles([]); // Reset the files array
     } catch (error) {
       console.error(error);
-      toast.error("Error uploading image");
+      toast.error("Error uploading images");
     } finally {
       setUploadLoading(false);
     }
@@ -652,7 +672,8 @@ const AddNewStock = () => {
                                 <Input
                                   id="file"
                                   type="file"
-                                  onChange={(e) => setFile(e.target.files?.[0])}
+                                  multiple
+                                  onChange={(e) => setFiles(e.target.files)}
                                 />
 
                                 {uploadLoading ? (
@@ -666,7 +687,7 @@ const AddNewStock = () => {
                                       onFileSubmit(e, combination)
                                     }
                                     disabled={
-                                      !file ||
+                                      !files ||
                                       uploadLoading ||
                                       productData.variants[combination]
                                         .imagePaths.length >= 10
@@ -875,7 +896,8 @@ const AddNewStock = () => {
                     <Input
                       id="file"
                       type="file"
-                      onChange={(e) => setFile(e.target.files?.[0])}
+                      multiple
+                      onChange={(e) => setFiles(e.target.files)}
                     />
 
                     {uploadLoading ? (
@@ -887,7 +909,7 @@ const AddNewStock = () => {
                       <Button
                         onClick={onFileSubmit}
                         disabled={
-                          !file ||
+                          !files ||
                           uploadLoading ||
                           productData.imagePaths.length >= 10
                         }
@@ -927,7 +949,7 @@ const AddNewStock = () => {
 
                 <div className="mt-10">
                   <Label className="text-md">Product Pricing Details</Label>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div className="grid grid-cols-3 gap-2 mt-2">
                     <div className="mb-4 flex flex-col gap-1">
                       <Label htmlFor="mrp">MRP:</Label>
                       <Input
@@ -945,6 +967,18 @@ const AddNewStock = () => {
                         id="costPrice"
                         name="costPrice"
                         value={productData.pricing.costPrice}
+                        onChange={handlePricingChange}
+                      />
+                    </div>
+                    <div className="mb-4 flex flex-col gap-1">
+                      <Label htmlFor="salesPrice">
+                        Selling Price(Optional):
+                      </Label>
+                      <Input
+                        type="text"
+                        id="salesPrice"
+                        name="salesPrice"
+                        value={productData.pricing.salesPrice}
                         onChange={handlePricingChange}
                       />
                     </div>
