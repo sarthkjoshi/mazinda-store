@@ -5,6 +5,7 @@ import store from "@/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Slide } from "react-toastify";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayoutClient({ children }) {
   return (
@@ -25,6 +26,7 @@ export default function RootLayoutClient({ children }) {
         />
         {children}
       </Provider>
+      <Toaster />
     </>
   );
 }

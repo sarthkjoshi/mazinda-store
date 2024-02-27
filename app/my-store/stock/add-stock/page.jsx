@@ -69,10 +69,6 @@ const AddNewStock = () => {
     variantsInfo: {},
   });
 
-  useEffect(() => {
-    console.log(productData);
-  }, [productData]);
-
   function generateRandomAlphanumeric() {
     const alphanumericCharacters =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
