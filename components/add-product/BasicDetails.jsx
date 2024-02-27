@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -64,15 +63,13 @@ const BasicDetails = ({ productData, setProductData }) => {
   //     tags: newTags,
   //   }));
   // };
-  
+
   const handleTagsChange = (e) => {
-    const newTags = e.target.value
-        .split(",")
-        .map((tag) => tag.trimStart());
-        setProductData((prevData) => ({
-          ...prevData,
-          tags: newTags,
-        }));
+    const newTags = e.target.value.split(",").map((tag) => tag.trimStart());
+    setProductData((prevData) => ({
+      ...prevData,
+      tags: newTags,
+    }));
   };
 
   const handleRemoveTag = (tag) => {
