@@ -30,6 +30,11 @@ const StocksPage = () => {
             Bulk Upload
           </Button>
         </Link>
+        <Link href="/my-store/stock/browse-online">
+          <Button className="w-full" variant={"secondary"}>
+            Browse the Internet
+          </Button>
+        </Link>
 
         <Button variant="secondary" onClick={toggleAddStock}>
           Import and Edit Stock From Suggestions
