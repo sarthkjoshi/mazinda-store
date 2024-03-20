@@ -21,19 +21,25 @@ const Navbar = () => {
       {!pathname.includes("auth") && (
         <nav className="bg-white border-gray-200 dark:bg-gray-900 py-2">
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <Link
-              href={pathname.includes("admin") ? "/admin" : "store"}
-              className="flex items-center"
+            <div className="md:hidden">
+              <Link
+                href={pathname.includes("admin") ? "/admin" : "store"}
+                className="flex items-center"
+              >
+                <Image
+                  width={120}
+                  height={60}
+                  src={MazindaLogo}
+                  className="h-8 mr-3"
+                  alt="Mazinda Logo"
+                />
+              </Link>
+            </div>
+            <Button
+              variant="destructive"
+              className="md:hidden"
+              onClick={() => signOut()}
             >
-              <Image
-                width={120}
-                height={60}
-                src={MazindaLogo}
-                className="h-8 mr-3"
-                alt="Mazinda Logo"
-              />
-            </Link>
-            <Button variant="destructive" onClick={() => signOut()}>
               Logout
             </Button>
           </div>
