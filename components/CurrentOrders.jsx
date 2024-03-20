@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import Cookies from "js-cookie";
+
 import React, { useEffect, useState } from "react";
 import OvalLoader from "./utility/OvalLoader";
 import Link from "next/link";
@@ -21,10 +21,7 @@ const CurrentOrders = () => {
   const [currentOrders, setCurrentOrders] = useState([]);
 
   const fetchData = async () => {
-    const storeToken = Cookies.get("store_token");
-    const { data } = await axios.post("/api/order/fetch-store-orders", {
-      storeToken,
-    });
+    const { data } = await axios.get("/api/order/fetch-store-orders");
     setCurrentOrders(data.currentOrders.reverse());
     setPageLoading(false);
   };

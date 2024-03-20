@@ -1,16 +1,15 @@
 "use client";
 
-import Cookies from "js-cookie";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import axios from "axios";
 import OvalLoader from "@/components/utility/OvalLoader";
 import MazindaLogoFull from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
 
 const LoginPage = () => {
   let router;
@@ -20,14 +19,9 @@ const LoginPage = () => {
     console.log(e);
   }
 
-  const store_token = Cookies.get("store_token");
-  if (store_token) {
-    router.push("/");
-  }
-
   const [submitting, setSubmitting] = useState(false);
   const [credentials, setCredentials] = useState({
-    identifier: "",
+    phone: "",
     password: "",
   });
 
@@ -43,16 +37,12 @@ const LoginPage = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    const { data } = await axios.post("/api/auth/login-store", {
-      credentials,
+    const res = await signIn("credentials", {
+      ...credentials,
+      redirect: false,
     });
-
-    console.log(data);
-    if (data.success) {
-      Cookies.set("store_token", data.store_token, { expires: 1000 });
-      router.push(`/store`);
-    } else {
-      toast.error(data.message, { autoClose: 3000 });
+    if (res.status == 200) {
+      router.push("/");
     }
     setSubmitting(false);
   };
@@ -76,17 +66,17 @@ const LoginPage = () => {
         <form onSubmit={handleSubmit} className="my-12">
           <div className="mb-4">
             <label
-              htmlFor="identifier"
+              htmlFor="phone"
               className="block text-gray-700 font-bold mb-2"
             >
-              Email or Phone
+              Phone
             </label>
             <Input
               type="text"
-              id="identifier"
-              name="identifier"
-              placeholder="Enter your email or phone"
-              value={credentials.identifier}
+              id="phone"
+              name="phone"
+              placeholder="Enter your phone"
+              value={credentials.phone}
               onChange={handleInputChange}
             />
           </div>

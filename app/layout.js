@@ -2,6 +2,7 @@ import { Quicksand } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import RootLayoutClient from "@/components/RootLayoutClient";
+import NextAuthProvider from "@/provider/NextAuthProvider";
 
 const quicksand = Quicksand({
   weight: "500",
@@ -18,7 +19,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={quicksand.className}>
-        <RootLayoutClient>{children}</RootLayoutClient>
+        <NextAuthProvider>
+          <RootLayoutClient>{children}</RootLayoutClient>
+        </NextAuthProvider>
       </body>
     </html>
   );

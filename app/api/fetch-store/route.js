@@ -2,27 +2,38 @@ import Store from "@/models/Store";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
 
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
 
-export async function POST(req) {
-    try {
-        const { store_token } = await req.json();
-        const data = jwt.verify(store_token, 'this is jwt secret')
+export async function GET(req) {
+  try {
+    const { user } = await getServerSession(authOptions);
 
-        const mobileNumber = data.mobileNumber
-        
-        // Connecting to database
-        await connectDB()
+    const mobileNumber = user.mobileNumber;
 
-        // Checking if the user already exists
-        let store = await Store.findOne({ mobileNumber });
+    // Connecting to database
+    await connectDB();
 
-        if (store) {
-            return NextResponse.json({ success: true, message: "Store fetched successfully", store});
-        } else {
-            return NextResponse.json({ success: false, message: "Store doesn't exist" });
-        }
-    } catch (error) {
-        return NextResponse.json({ success: false, error: "An error occurred while fetching the store : " + error });
+    // Checking if the user already exists
+    let store = await Store.findOne({ mobileNumber });
+
+    if (store) {
+      return NextResponse.json({
+        success: true,
+        message: "Store fetched successfully",
+        store,
+      });
+    } else {
+      return NextResponse.json({
+        success: false,
+        message: "Store doesn't exist",
+      });
     }
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      error: "An error occurred while fetching the store : " + error,
+    });
+  }
 }

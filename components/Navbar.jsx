@@ -4,10 +4,11 @@ import Link from "next/link";
 import MazindaLogo from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import Cookies from "js-cookie";
+
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
+import { signOut } from "next-auth/react";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -32,13 +33,7 @@ const Navbar = () => {
                 alt="Mazinda Logo"
               />
             </Link>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                Cookies.remove("store_token");
-                router.push("/auth/login");
-              }}
-            >
+            <Button variant="destructive" onClick={() => signOut()}>
               Logout
             </Button>
           </div>

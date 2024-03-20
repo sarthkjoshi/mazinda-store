@@ -1,18 +1,20 @@
 import Store from "@/models/Store";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+
 import Order from "@/models/Order";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function POST(req) {
+export async function GET(req) {
   try {
-    const { storeToken } = await req.json();
+    const { user } = await getServerSession(authOptions);
 
-    const storeData = jwt.verify(storeToken, "this is jwt secret");
+    const mobileNumber = user.mobileNumber;
 
     await connectDB();
 
-    let store = await Store.findOne({ mobileNumber: storeData.mobileNumber });
+    let store = await Store.findOne({ mobileNumber: mobileNumber });
 
     if (!store) {
       return NextResponse.json({
@@ -20,6 +22,7 @@ export async function POST(req) {
         error: "store doesn't exists",
       });
     }
+
     let undeliveredOrders = await Order.find({ status: { $ne: "Delivered" } });
     let storeOrders = [];
     let newCart = [];
@@ -27,7 +30,7 @@ export async function POST(req) {
     undeliveredOrders.map((order) => {
       // Adding store specific items only in the cart of storeOrder
       order.cart.map((product) => {
-        if (product.storeId === storeData.id) {
+        if (product.storeId === store.id) {
           newCart.push(product);
         }
       });
