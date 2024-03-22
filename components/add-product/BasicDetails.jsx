@@ -53,19 +53,8 @@ const BasicDetails = ({ productData, setProductData }) => {
     fetchCategoriesAndSubcategories();
   }, [productData.category]);
 
-  // const handleTagsChange = (e) => {
-  //   const newTags = e.target.value
-  //     .replace(/ /g, "")
-  //     .split(",")
-  //     .map((tag) => tag.trim());
-  //   setProductData((prevData) => ({
-  //     ...prevData,
-  //     tags: newTags,
-  //   }));
-  // };
-
   const handleTagsChange = (e) => {
-    const newTags = e.target.value.split(",").map((tag) => tag.trimStart());
+    const newTags = e.target.value.split(",").map((tag) => tag.trim());
     setProductData((prevData) => ({
       ...prevData,
       tags: newTags,
