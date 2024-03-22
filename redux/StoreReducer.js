@@ -1,23 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
+
 import axios from "axios";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
 // Action
 export const fetchStoreData = createAsyncThunk("fetchStore", async () => {
-  const store_token = Cookies.get("store_token");
-  if (!store_token) {
-    return;
-  }
-  const { data } = await axios.post("/api/fetch-store", {
-    store_token,
-  });
-
-  const product_response = await axios.post(
-    "/api/product/fetch-store-products",
-    {
-      storeToken: store_token,
-    }
-  );
+  const { data } = await axios.get("/api/fetch-store");
+  const product_response = await axios.get("/api/product/fetch-store-products");
 
   return { store: data.store, products: product_response.data.products };
 });
@@ -32,8 +22,8 @@ export const StoreSlice = createSlice({
     products: [],
   },
   prepare: async () => {
-    const store_token = Cookies.get("store_token");
-    return { payload: store_token || null };
+    const { user } = await getServerSession(authOptions);
+    return { payload: user || null };
   },
   reducers: {},
   extraReducers: (builder) => {

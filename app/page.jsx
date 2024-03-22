@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const StoreDashboard = () => {
@@ -10,19 +9,8 @@ const StoreDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      let storeToken;
-
       try {
-        storeToken = Cookies.get("store_token");
-
-        if (!storeToken) {
-          router.push("/auth/register");
-          return;
-        }
-
-        const { data } = await axios.post(`/api/fetch-store`, {
-          store_token: storeToken,
-        });
+        const { data } = await axios.get(`/api/fetch-store`);
 
         if (data.success) {
           const approvalStatus = data.store.approvedStatus;

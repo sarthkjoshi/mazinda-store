@@ -35,14 +35,9 @@ export async function POST(req) {
         gstin,
       });
 
-      const store_token = jwt.sign(
-        { id: newStore._id, storeName, mobileNumber, email },
-        "this is jwt secret"
-      );
       return NextResponse.json({
         success: true,
         message: "Store created successfully",
-        store_token,
       });
     } else {
       return NextResponse.json({

@@ -8,7 +8,6 @@ import axios from "axios";
 import MazindaLogoFull from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -44,16 +43,15 @@ const RegisterStorePage = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const response = await axios.post("/api/auth/register-store", {
+    const response = await axios.post("/api/register-store", {
       formData,
     });
     const json = response.data;
     setIsSubmitting(false);
 
     if (json.success) {
-      Cookies.set("store_token", json.store_token);
       toast.success(json.message, { autoClose: 3000 });
-      router.push("/");
+      router.push("/auth/login");
     } else {
       toast.error(json.message, { autoClose: 3000 });
     }
