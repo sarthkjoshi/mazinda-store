@@ -2,13 +2,10 @@
 
 import ExistingStock from "@/components/stock/ExistingStock";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const StocksPage = () => {
-  const router = useRouter();
-
   const [isAddStockExpanded, setAddStockExpanded] = useState(false);
 
   const toggleAddStock = () => {
@@ -16,21 +13,21 @@ const StocksPage = () => {
   };
 
   return (
-    <div className="p-4 md:w-1/2 lg:w-1/3 md:mx-auto mb-20">
-      <h1 className="text-2xl font-bold mb-4 text-center">Add a new Stock</h1>
+    <div className="p-4 lg:w-1/3 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Add a new Stock</h1>
       <ul className="flex flex-col gap-2">
-        <Link href={"/my-store/stock/add-stock"}>
+        <Link href={"/stock/add-stock"}>
           <Button className="w-full" variant={"secondary"}>
             Create a New Fresh Stock
           </Button>
         </Link>
 
-        <Link href="/my-store/stock/bulk-upload">
+        <Link href="/stock/bulk-upload">
           <Button className="w-full" variant={"secondary"}>
             Bulk Upload
           </Button>
         </Link>
-        <Link href="/my-store/stock/browse-online">
+        <Link href="/stock/browse-online">
           <Button className="w-full" variant={"secondary"}>
             Browse the Internet
           </Button>

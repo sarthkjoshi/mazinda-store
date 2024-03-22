@@ -181,7 +181,7 @@ const BulkUpload = () => {
           </DialogContent>
         </Dialog>
 
-        <Link href="/my-store/stock/bulk-upload/image-gallery">
+        <Link href="/stock/bulk-upload/image-gallery">
           <Button variant="outline" className="w-full">
             Manage your product images
           </Button>

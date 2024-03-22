@@ -1,16 +1,16 @@
 import Store from "@/models/Store";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
-
-import jwt from "jsonwebtoken";
-import { getServerSession } from "next-auth";
+// import jwt from "jsonwebtoken";
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
 
-export async function GET(req) {
+export async function GET() {
   try {
-    const { user } = await getServerSession(authOptions);
+    const data = await getServerSession(authOptions);
+    console.log(data);
 
-    const mobileNumber = user.mobileNumber;
+    const mobileNumber = data.user.mobileNumber;
 
     // Connecting to database
     await connectDB();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import axios from "axios";
 import OvalLoader from "@/components/utility/OvalLoader";
@@ -28,15 +29,31 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const ProductsPage = () => {
+  const { data: session, status } = useSession();
+  // console.log(status);
+
   const store = useSelector((state) => state.store.store);
 
-  const products = useSelector((state) => state.store.products);
+  const [products, setProducts] = useState([]);
 
   const [approvedProducts, setApprovedProducts] = useState([]);
   const [pendingProducts, setPendingProducts] = useState([]);
   const [addStoryLoading, setAddStoryLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [specialPrice, setSpecialPrice] = useState(null);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      (async () => {
+        const { data } = await axios.post("/api/product/fetch-store-products", {
+          storeId: session.user.id,
+        });
+        if (data.success) {
+          setProducts(data.products);
+        }
+      })();
+    }
+  }, []);
 
   // const toggleAvailability = async (productId) => {
   //   const updatedProduct = products.filter((product) => {
@@ -86,17 +103,19 @@ const ProductsPage = () => {
   };
 
   useEffect(() => {
-    // Separate products into approved and pending based on approvalStatus
-    const approved = products.filter(
-      (product) => product.approvalStatus === true
-    );
-    const pending = products.filter(
-      (product) => product.approvalStatus === false
-    );
+    if (products.length) {
+      // Separate products into approved and pending based on approvalStatus
+      const approved = products.filter(
+        (product) => product.approvalStatus === true
+      );
+      const pending = products.filter(
+        (product) => product.approvalStatus === false
+      );
 
-    setApprovedProducts(approved);
-    setPendingProducts(pending);
-  }, []);
+      setApprovedProducts(approved);
+      setPendingProducts(pending);
+    }
+  }, [products]);
 
   const productsTable = (products) => {
     return (
@@ -175,7 +194,7 @@ const ProductsPage = () => {
                 <TableCell className="">
                   <div className="flex items-center gap-3 flex-col">
                     <Link
-                      href={`/my-store/products/edit-product?id=${product._id}`}
+                      href={`/products/edit-product?id=${product._id}`}
                       className="text-[12px] md:text-sm text-white bg-yellow-400 px-2 rounded-md"
                     >
                       Edit
@@ -198,8 +217,8 @@ const ProductsPage = () => {
   };
 
   return (
-    <div className="p-4 md:w-1/2 mx-auto mb-20">
-      <h1 className="text-2xl font-bold mb-4 text-center">Your Products</h1>
+    <div className="p-4 bg-white rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Your Products</h1>
 
       <Tabs defaultValue="all">
         <TabsList>

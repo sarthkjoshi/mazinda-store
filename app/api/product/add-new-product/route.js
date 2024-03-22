@@ -1,14 +1,13 @@
 import Product from "@/models/Product";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
 
 export async function POST(req) {
   try {
     const { productData } = await req.json();
     const {
       productName,
-      storeToken,
+      storeId,
       category,
       subcategory,
       imagePaths,
@@ -20,9 +19,6 @@ export async function POST(req) {
       combinationName,
       variantId,
     } = productData;
-
-    const storeData = jwt.verify(storeToken, "this is jwt secret");
-    const storeId = storeData["id"];
 
     await connectDB();
 

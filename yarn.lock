@@ -893,7 +893,7 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@types/nprogress@^0.2.1":
+"@types/nprogress@^0.2.2":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@types/nprogress/-/nprogress-0.2.3.tgz#b2150b054a13622fabcba12cf6f0b54c48b14287"
   integrity sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==
@@ -1994,12 +1994,12 @@ next@14.0.3:
     "@next/swc-win32-ia32-msvc" "14.0.3"
     "@next/swc-win32-x64-msvc" "14.0.3"
 
-nextjs-toploader@^1.6.4:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-1.6.4.tgz#1a498fc8c9b073d937fb932382aeb5bb1d007339"
-  integrity sha512-KYLQ+0MvGdFk9JwOQfRtaYBAsyuX67Ca5QTa51RGNO4gQx64KLSE+ryHjUQ5LcDczHotp0l32GgksQW9vucUkw==
+nextjs-toploader@^1.6.11:
+  version "1.6.11"
+  resolved "https://registry.yarnpkg.com/nextjs-toploader/-/nextjs-toploader-1.6.11.tgz#34caba01d147085dfc806414702d06776b930915"
+  integrity sha512-2mt+YDj3I7s8JGv136TRdJo9amd2BBeb2u1U4tyvZpR08eqeBgqp3xsw2Yu1AUT7C3NZQhbQN11EXwnlqsPEIA==
   dependencies:
-    "@types/nprogress" "^0.2.1"
+    "@types/nprogress" "^0.2.2"
     nprogress "^0.2.0"
     prop-types "^15.8.1"
 

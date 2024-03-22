@@ -1,10 +1,12 @@
 import connectDB from "@/libs/mongoose";
 import Store from "@/models/Store";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { signOut } from "next-auth/react";
 
 export const authOptions = {
   pages: {
     signIn: "/auth/login",
+    signOut: "/auth/login",
   },
   providers: [
     CredentialsProvider({
@@ -40,6 +42,8 @@ export const authOptions = {
           storeName: user.storeName,
           mobileNumber: user.mobileNumber,
           email: user.email,
+          approvedStatus: user.approvedStatus,
+          businessType: user.businessType,
         };
       }
       return token;
@@ -53,9 +57,11 @@ export const authOptions = {
           storeName: token.storeName,
           mobileNumber: token.mobileNumber,
           email: token.email,
+          approvedStatus: token.approvedStatus,
+          businessType: token.businessType,
         },
       };
-      return session;
+      // return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,

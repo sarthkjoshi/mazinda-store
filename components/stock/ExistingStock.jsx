@@ -8,18 +8,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { useSession } from "next-auth/react";
 
 const ExistingStock = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { user } = getServerSession(authOptions);
+
+  const { data: session, status } = useSession();
+  console.log(session);
+
   const [productData, setProductData] = useState({
     productName: "",
-    storeToken: user,
+    storeId: session.user.id,
     category: "",
     subcategory: "",
     imagePaths: [],
@@ -57,7 +59,7 @@ const ExistingStock = () => {
     setSelectedProduct(product);
     setProductData({
       productName: product.productName,
-      storeToken: user,
+      storeId: session.user.id,
       category: product.category,
       subcategory: product.subcategory,
       imagePaths: product.imagePaths,

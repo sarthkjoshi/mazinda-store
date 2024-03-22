@@ -38,7 +38,7 @@ const SearchOnline = () => {
     return (
       <div className="border rounded-md mb-2">
         <div className="flex items-center justify-between p-3">
-          <div>
+          <div className="flex flex-col gap-3">
             <img
               className="w-[100px] h-[100px] object-contain"
               src={imagePath}
@@ -50,7 +50,7 @@ const SearchOnline = () => {
             <a
               href={"https://amazon.in" + productLink}
               target="_blank"
-              className="block mt-3 text-blue-700 underline font-bold text-sm"
+              className="block text-blue-700 underline font-bold text-sm"
             >
               Click to view details
             </a>
@@ -71,8 +71,8 @@ const SearchOnline = () => {
   };
 
   return (
-    <div className="md:w-1/2 mx-auto pb-20">
-      <h1 className="text-lg mt-5">Browse products over the internet</h1>
+    <div className="bg-white p-4 rounded-lg">
+      <h1 className="text-lg">Browse products over the internet</h1>
       <div className="flex gap-1 my-3">
         <Input
           placeholder="Search for products..."
@@ -86,9 +86,7 @@ const SearchOnline = () => {
             Please wait
           </Button>
         ) : (
-          <Button variant="secondary" onClick={() => fetchData()}>
-            Search
-          </Button>
+          <Button onClick={() => fetchData()}>Search</Button>
         )}
       </div>
 
