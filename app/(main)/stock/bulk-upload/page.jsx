@@ -132,7 +132,7 @@ const BulkUpload = () => {
   }, []);
 
   return (
-    <div className="relative h-[80vh] md:w-2/3 mx-auto p-4">
+    <div className="relative bg-white rounded-lg p-4">
       <h1 className="font-bold text-xl">Bulk Upload</h1>
 
       <div className="flex gap-2 flex-col md:flex-row mt-5">
