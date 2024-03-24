@@ -44,7 +44,7 @@ import {
 const AddNewStock = () => {
   const { data: session, status } = useSession();
   console.log(status);
-  const store = session.user;
+  const store = session?.user;
   const [counter, setCounter] = useState(0);
   const [selectedVariantCategory, setSelectedVariantCategory] = useState("");
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -56,7 +56,7 @@ const AddNewStock = () => {
 
   const [productData, setProductData] = useState({
     productName: "",
-    storeId: store.id,
+    storeId: store?.id,
     category: "",
     subcategory: "",
     imagePaths: [],
@@ -149,7 +149,7 @@ const AddNewStock = () => {
       // Reset state after successful submission
       setProductData({
         productName: "",
-        storeId: store.id,
+        storeId: store?.id,
         category: "",
         subcategory: "",
         imagePaths: [],
@@ -736,7 +736,7 @@ const AddNewStock = () => {
                                 )}
                               </div>
 
-                              {store.businessType.includes("b2c") ? (
+                              {store?.businessType.includes("b2c") ? (
                                 <div className="mt-4 flex flex-col gap-1">
                                   <Label
                                     htmlFor="minQuantity"
