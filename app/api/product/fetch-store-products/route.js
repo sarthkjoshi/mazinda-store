@@ -1,16 +1,10 @@
 import connectDB from "@/libs/mongoose";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function GET(req) {
+export async function POST(req) {
+  const { storeId } = await req.json();
   try {
-    const { user } = await getServerSession(authOptions);
-
-    const storeId = user.id;
-
     await connectDB();
     const products = await Product.find({ storeId });
     return NextResponse.json({ success: true, products });

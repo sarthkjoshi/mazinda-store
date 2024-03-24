@@ -58,11 +58,15 @@ const RegisterStorePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen my-4">
-      <Image className="my-4" src={MazindaLogoFull} alt="mazinda" />
-      <div className="max-w-xl w-full p-2 bg-white rounded-lg">
-        <h1 className="mb-1 text-center font-bold text-4xl">Register Store</h1>
-        <div className="flex items-center justify-center mb-4">
+    <div className="flex flex-col items-center min-h-screen px-5">
+      <Image
+        className="mt-8 mb-4 h-10 object-contain"
+        src={MazindaLogoFull}
+        alt="Mazinda Logo"
+      />
+      <div className="w-full max-w-md p-6 bg-white rounded-md border border-gray-200">
+        <h1 className="mb-1 text-center font-bold text-3xl">Register Store</h1>
+        <div className="flex items-center justify-center">
           <p className="inline text-center text-gray-600">
             Or{" "}
             <Link href="/auth/login" className="text-gray-600 hover:underline">
@@ -70,11 +74,9 @@ const RegisterStorePage = () => {
             </Link>
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="p-10">
+        <form onSubmit={handleSubmit} className="mt-5">
           <div className="mb-4">
-            <Label htmlFor="ownerName" className="block font-bold mb-1">
-              Owner's Name
-            </Label>
+            <Label htmlFor="ownerName">Owner's Name</Label>
             <Input
               type="text"
               id="ownerName"
@@ -86,9 +88,7 @@ const RegisterStorePage = () => {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="storeName" className="block font-bold mb-1">
-              Store Name
-            </Label>
+            <Label htmlFor="storeName">Store Name</Label>
             <Input
               type="text"
               id="storeName"
@@ -100,9 +100,7 @@ const RegisterStorePage = () => {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="address" className="block font-bold mb-1">
-              Store Address
-            </Label>
+            <Label htmlFor="address">Store Address</Label>
             <Input
               type="text"
               id="address"
@@ -115,9 +113,7 @@ const RegisterStorePage = () => {
           </div>
           <div className="mb-4 flex">
             <div className="w-1/2 mr-2">
-              <Label htmlFor="city" className="block font-bold mb-1">
-                City
-              </Label>
+              <Label htmlFor="city">City</Label>
               <Input
                 type="text"
                 id="city"
@@ -129,9 +125,7 @@ const RegisterStorePage = () => {
               />
             </div>
             <div className="w-1/2 ml-2">
-              <Label htmlFor="pincode" className="block font-bold mb-1">
-                Pincode
-              </Label>
+              <Label htmlFor="pincode">Pincode</Label>
               <Input
                 type="text"
                 id="pincode"
@@ -145,7 +139,7 @@ const RegisterStorePage = () => {
           </div>
 
           <div className="my-5">
-            <Label className="block font-bold mb-1">Business Type</Label>
+            <Label>Business Type</Label>
 
             <div className="flex items-center space-x-2 mt-3 mb-2">
               <Checkbox
@@ -192,9 +186,7 @@ const RegisterStorePage = () => {
 
           {formData.businessType.includes("b2b") ? (
             <div className="mb-4">
-              <Label htmlFor="email" className="block font-bold mb-1">
-                GSTIN
-              </Label>
+              <Label>GSTIN</Label>
               <Input
                 type="text"
                 id="gstin"
@@ -209,9 +201,7 @@ const RegisterStorePage = () => {
 
           <div className="mb-4 flex">
             <div className="w-1/2 mr-2">
-              <Label htmlFor="mobileNumber" className="block font-bold mb-1">
-                Mobile Number
-              </Label>
+              <Label htmlFor="mobileNumber">Mobile Number</Label>
               <Input
                 type="tel"
                 id="mobileNumber"
@@ -222,12 +212,7 @@ const RegisterStorePage = () => {
               />
             </div>
             <div className="w-1/2 ml-2">
-              <Label
-                htmlFor="alternateMobileNumber"
-                className="block font-bold mb-1"
-              >
-                Alternate Phone
-              </Label>
+              <Label htmlFor="alternateMobileNumber">Alternate Phone</Label>
               <Input
                 type="tel"
                 id="alternateMobileNumber"
@@ -239,9 +224,7 @@ const RegisterStorePage = () => {
             </div>
           </div>
           <div className="mb-4">
-            <Label htmlFor="email" className="block font-bold mb-1">
-              Email
-            </Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               type="email"
               id="email"
@@ -253,9 +236,7 @@ const RegisterStorePage = () => {
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="password" className="block font-bold mb-1">
-              Password
-            </Label>
+            <Label htmlFor="password">Password</Label>
             <Input
               type="password"
               id="password"
@@ -288,7 +269,7 @@ const RegisterStorePage = () => {
               type="submit"
               className={`w-full ${
                 formData.acceptTerms ? "bg-[#fe6321]" : "bg-gray-300"
-              } text-white font-bold py-2 px-4 rounded-full ${
+              } text-white font-bold py-2 px-4 ${
                 formData.acceptTerms ? "hover:opacity-70" : ""
               }`}
             >
@@ -297,8 +278,10 @@ const RegisterStorePage = () => {
           </div>
         </form>
       </div>
-      <footer className="mt-8 text-center text-gray-500">
-        &copy; 2024 All Rights Reserved | Privacy Policy | Terms of Service
+      <footer className="mt-5 text-center text-sm text-gray-800">
+        <span className="text-gray-500">&copy; 2024 All Rights Reserved</span>
+        <br />
+        <b>Privacy Policy</b> | <b>Terms of Service</b>
       </footer>
     </div>
   );

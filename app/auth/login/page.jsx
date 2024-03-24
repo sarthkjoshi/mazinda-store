@@ -3,13 +3,13 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 import OvalLoader from "@/components/utility/OvalLoader";
 import MazindaLogoFull from "@/public/logo_mazinda.png";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { Label } from "@/components/ui/label";
 
 const LoginPage = () => {
   let router;
@@ -48,10 +48,14 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <Image className="my-4" src={MazindaLogoFull} alt="Mazinda Logo" />
-      <div className="max-w-md w-full p-6 bg-white rounded-lg">
-        <h1 className="mb-1 text-center font-bold text-4xl">Store Login</h1>
+    <div className="flex flex-col items-center min-h-screen px-5">
+      <Image
+        className="mt-8 mb-4 h-10 object-contain"
+        src={MazindaLogoFull}
+        alt="Mazinda Logo"
+      />
+      <div className="w-full max-w-md p-6 bg-white rounded-md border border-gray-200">
+        <h1 className="mb-1 text-center font-bold text-3xl">Store Login</h1>
         <div className="flex items-center justify-center">
           <p className="inline text-center text-gray-600">
             Or{" "}
@@ -63,14 +67,9 @@ const LoginPage = () => {
             </Link>
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="my-12">
+        <form onSubmit={handleSubmit} className="my-5">
           <div className="mb-4">
-            <label
-              htmlFor="phone"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Phone
-            </label>
+            <Label htmlFor="phone">Phone</Label>
             <Input
               type="text"
               id="phone"
@@ -81,12 +80,7 @@ const LoginPage = () => {
             />
           </div>
           <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-gray-700 font-bold mb-2"
-            >
-              Password
-            </label>
+            <Label htmlFor="password">Password</Label>
             <Input
               type="password"
               id="password"
@@ -97,7 +91,7 @@ const LoginPage = () => {
             />
           </div>
           <div className="mb-4 text-right">
-            <a href="#" className="text-gray-700 hover:underline">
+            <a href="#" className="text-gray-700 hover:underline text-sm">
               Forgot Password?
             </a>
           </div>
@@ -108,8 +102,10 @@ const LoginPage = () => {
           </div>
         </form>
       </div>
-      <footer className="mt-8 text-center text-gray-500">
-        &copy; 2024 All Rights Reserved | Privacy Policy | Terms of Service
+      <footer className="mt-5 text-center text-sm text-gray-800">
+        <span className="text-gray-500">&copy; 2024 All Rights Reserved</span>
+        <br />
+        <b>Privacy Policy</b> | <b>Terms of Service</b>
       </footer>
     </div>
   );

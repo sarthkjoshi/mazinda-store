@@ -5,17 +5,20 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { Badge } from "../ui/badge";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 const AddSingleProduct = ({ productName, imagePath }) => {
-  const { user } = getServerSession(authOptions);
+  const { data: session, status } = useSession();
+
+  console.log(session);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [productData, setProductData] = useState({
     productName: productName,
-    storeToken: user,
+    storeId: session.user,
     category: "",
     subcategory: "",
     imagePaths: [imagePath],
@@ -144,7 +147,7 @@ const AddSingleProduct = ({ productName, imagePath }) => {
       // Reset state after successful submission
       setProductData({
         productName: "",
-        storeToken: user,
+        storeId: session.user.id,
         category: "",
         subcategory: "",
         imagePaths: [],

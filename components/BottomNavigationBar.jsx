@@ -1,12 +1,11 @@
 import Link from "next/link";
 
-function BottomMenu() {
-  
+function BottomNavigationBar() {
   return (
     <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
       <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium scale-90">
         <Link
-          href="/my-store"
+          href="/"
           type="button"
           className="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group"
         >
@@ -20,12 +19,12 @@ function BottomMenu() {
             <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
           </svg>
           <span className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500">
-            Dashboard
+            Orders
           </span>
         </Link>
         <Link
           className="inline-flex flex-col items-center justify-center px-5 hover-bg-gray-50 dark:hover-bg-gray-800 group"
-          href="/my-store/products"
+          href="/products"
         >
           <svg
             className="w-5 h-5 mb-2 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-500"
@@ -42,7 +41,7 @@ function BottomMenu() {
         </Link>
 
         <Link
-          href="/my-store/stock"
+          href="/stock"
           className="inline-flex flex-col items-center justify-center px-5 hover-bg-gray-50 dark:hover-bg-gray-800 group"
         >
           <svg
@@ -98,4 +97,4 @@ function BottomMenu() {
   );
 }
 
-export default BottomMenu;
+export default BottomNavigationBar;

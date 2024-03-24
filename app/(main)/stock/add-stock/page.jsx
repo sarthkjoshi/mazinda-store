@@ -3,7 +3,6 @@
 import BasicDetails from "@/components/add-product/BasicDetails";
 import ReviewProduct from "@/components/add-product/ReviewProduct";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -14,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
 
 import {
   Select,
@@ -43,7 +42,9 @@ import {
 } from "@/components/ui/accordion";
 
 const AddNewStock = () => {
-  const store = useSelector((state) => state.store.store);
+  const { data: session, status } = useSession();
+  console.log(status);
+  const store = session?.user;
   const [counter, setCounter] = useState(0);
   const [selectedVariantCategory, setSelectedVariantCategory] = useState("");
   const [selectedVariants, setSelectedVariants] = useState({});
@@ -55,7 +56,7 @@ const AddNewStock = () => {
 
   const [productData, setProductData] = useState({
     productName: "",
-    storeToken: Cookies.get("store_token"),
+    storeId: store?.id,
     category: "",
     subcategory: "",
     imagePaths: [],
@@ -148,7 +149,7 @@ const AddNewStock = () => {
       // Reset state after successful submission
       setProductData({
         productName: "",
-        storeToken: Cookies.get("store_token"),
+        storeId: store?.id,
         category: "",
         subcategory: "",
         imagePaths: [],
@@ -415,7 +416,7 @@ const AddNewStock = () => {
   const generatedCombinations = generateCombinations();
 
   return (
-    <div className="relative h-[80vh] md:w-1/2 mx-auto">
+    <div className="relative mx-auto bg-white p-4 rounded-lg">
       <div className="w-full flex gap-2 bg-white py-2 px-4 items-center justify-between mb-10">
         <span className="text-xl">
           {counter === 0
@@ -735,7 +736,7 @@ const AddNewStock = () => {
                                 )}
                               </div>
 
-                              {store.businessType.includes("b2c") ? (
+                              {store?.businessType.includes("b2c") ? (
                                 <div className="mt-4 flex flex-col gap-1">
                                   <Label
                                     htmlFor="minQuantity"
@@ -1027,7 +1028,6 @@ const AddNewStock = () => {
                 </div>
               </div>
             )}
-            <div className="h-24 w-full"></div>
           </div>
         ) : (
           <ReviewProduct productData={productData} />

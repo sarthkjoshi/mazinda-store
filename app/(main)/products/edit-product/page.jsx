@@ -90,7 +90,7 @@ const ProductDetails = () => {
     const { data } = await axios.put("/api/product/delete", { _id });
     if (data.success) {
       toast.success("Product deleted successfully");
-      router.push("/my-store/products");
+      router.push("/products");
     } else {
       toast.error("Error deleting the product");
     }
@@ -139,7 +139,7 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className="container mx-auto bg-white rounded-xl">
+    <div className="bg-white rounded-xl p-4">
       <h1 className="text-3xl font-semibold mb-4 text-center">
         Product Details
       </h1>
@@ -181,7 +181,9 @@ const ProductDetails = () => {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold">Selling Price(Optional):</label>
+                  <label className="block font-semibold">
+                    Selling Price(Optional):
+                  </label>
                   <Input
                     type="text"
                     name="pricing.salesPrice"

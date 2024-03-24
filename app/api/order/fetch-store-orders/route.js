@@ -3,18 +3,13 @@ import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
 
 import Order from "@/models/Order";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function GET(req) {
+export async function POST(req) {
+  const { storeId } = await req.json();
   try {
-    const { user } = await getServerSession(authOptions);
-
-    const mobileNumber = user.mobileNumber;
-
     await connectDB();
 
-    let store = await Store.findOne({ mobileNumber: mobileNumber });
+    let store = await Store.findById(storeId);
 
     if (!store) {
       return NextResponse.json({
