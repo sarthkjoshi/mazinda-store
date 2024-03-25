@@ -79,6 +79,23 @@ const ProductList = () => {
       console.log(err);
     }
   };
+  const removeFromBucket = async (index) => {
+    try {
+      const { data } = await axios.post("/api/remove-from-bucket", {
+        index,
+      });
+      if (data.success) {
+        const updatedBucketData = [...bucketData];
+        updatedBucketData.splice(index, 1);
+        setBucketData(updatedBucketData);
+        toast.success("Item removed from bucket successfully");
+      } else {
+        toast.error("Failed to remove item from bucket");
+      }
+    } catch (error) {
+      console.error("Error removing item from bucket:", error);
+    }
+  };
   const handleDownloadCSV = () => {
     // Get product names and image URLs from the bucketData state
     const productData = bucketData.map((bucket) => ({
@@ -173,10 +190,13 @@ const ProductList = () => {
         </Dialog>
       </div>
       <ul>
-        {bucketData.map((bucket) => (
-          <li className="shadow-xl p-5 rounded-xl">
+        {bucketData.map((bucket, index) => (
+          <li key={index} className="shadow-xl p-5 rounded-xl">
             <Image src={bucket.imagePath} width={200} height={200} alt="er" />
-            <p className="font-semibold text-blue-950">{bucket.productName}</p>
+            <p className="font-semibold text-blue-950 mb-3">
+              {bucket.productName}
+            </p>
+            <Button onClick={() => removeFromBucket(index)}>Remove</Button>
           </li>
         ))}
       </ul>
