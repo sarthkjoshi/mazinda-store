@@ -35,6 +35,17 @@ const SearchOnline = () => {
   }
 
   const renderItem = (productName, imagePath, productLink, index) => {
+    const handleAddToBucket = async () => {
+      console.log(productName, imagePath);
+      const res = await axios.post("/api/add-bucket", {
+        productName,
+        imagePath,
+        naaam: "sarthak",
+      });
+
+      console.log(res.data);
+    };
+
     return (
       <div className="border rounded-md mb-2">
         <div className="flex items-center justify-between p-3">
@@ -44,9 +55,7 @@ const SearchOnline = () => {
               src={imagePath}
               alt={productName}
             />
-
             <span>{productName}</span>
-
             <a
               href={"https://amazon.in" + productLink}
               target="_blank"
@@ -55,8 +64,9 @@ const SearchOnline = () => {
               Click to view details
             </a>
           </div>
-          <div>
+          <div className="flex gap-3">
             <Button onClick={() => setSelectedIndex(index)}>Choose</Button>
+            <Button onClick={handleAddToBucket}>Add to Bucket</Button>
           </div>
         </div>
 

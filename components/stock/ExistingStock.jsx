@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,6 @@ const ExistingStock = () => {
   const [loading, setLoading] = useState(false);
 
   const { data: session, status } = useSession();
-  console.log(session);
 
   const [productData, setProductData] = useState({
     productName: "",
