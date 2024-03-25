@@ -14,6 +14,7 @@ const StoreSchema = new mongoose.Schema(
     category: { type: String },
     openStatus: { type: Boolean, default: true },
     approvedStatus: { type: String, default: "pending" },
+    productBucket: { type: Array, default: [] },
   },
   { timestamps: true }
 );
