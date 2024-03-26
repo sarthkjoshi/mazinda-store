@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+import { Readable } from "stream";
+import csv from "csv-parser";
+
 import {
   Dialog,
   DialogContent,
@@ -27,13 +31,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useSession } from "next-auth/react";
 
 const BulkUpload = () => {
-  const store = useSelector((state) => state.store.store);
+  const { data: session, status } = useSession();
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [filePath, setFilePath] = useState("");
-
+  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const handleDownload = () => {
@@ -77,47 +83,124 @@ const BulkUpload = () => {
     link.click();
   };
 
-  const handleUpload = async () => {
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("storeName", store.storeName);
+  // const handleUpload = async () => {
+  //   setUploading(true);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file", selectedFile);
+  //     formData.append("storeName", store.storeName);
 
-      // Send file to backend for processing and uploading to S3
-      const { data } = await axios.post("/api/upload/upload-csv", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+  //     // Send file to backend for processing and uploading to S3
+  //     const { data } = await axios.post("/api/upload/upload-csv", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     if (data.success) {
+  //       setFilePath(data.location);
+  //       toast.success("File uploaded successfully");
+  //     } else {
+  //       toast.error("Oops, something went wrong");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading file:", error);
+  //   } finally {
+  //     setUploading(false);
+  //   }
+  // };
 
-      if (data.success) {
-        setFilePath(data.location);
-        toast.success("File uploaded successfully");
-      } else {
-        toast.error("Oops, something went wrong");
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
-      setUploading(false);
+  // const handleCreateRequest = async () => {
+  //   try {
+  //     const { data } = await axios.post("/api/bulk-upload/create-request", {
+  //       storeId: store._id,
+  //       storeName: store.storeName,
+  //       filePath,
+  //     });
+  //     if (data.success) {
+  //       toast.success("Your request for bulk upload is successfully submitted");
+  //     } else {
+  //       toast.error("Oops, something went wrong. Please try again later");
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  useEffect(() => {
+    if (products.length > 0) {
+      saveProductsToDatabase();
     }
-  };
+  }, [products]);
 
-  const handleCreateRequest = async () => {
+  const saveProductsToDatabase = async () => {
     try {
-      const { data } = await axios.post("/api/bulk-upload/create-request", {
-        storeId: store._id,
-        storeName: store.storeName,
-        filePath,
+      const response = await axios.post("/api/bulk-upload/create-request", {
+        storeId: session.user.id,
+        storeName: session.user.storeName,
+        products,
       });
-      if (data.success) {
+      if (response.data.success) {
         toast.success("Your request for bulk upload is successfully submitted");
       } else {
         toast.error("Oops, something went wrong. Please try again later");
       }
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.error("Error saving products:", error);
+    }
+  };
+
+  const parseCSV = (csvData) => {
+    return new Promise((resolve, reject) => {
+      const stream = Readable.from(csvData);
+      let records = [];
+
+      stream
+        .pipe(csv())
+        .on("data", (data) => {
+          const trimmedData = Object.fromEntries(
+            Object.entries(data).map(([key, value]) => [key, value.trim()])
+          );
+
+          if (Object.values(trimmedData).some((val) => val !== "\n")) {
+            if (trimmedData.productName !== "") {
+              records.push(trimmedData);
+            }
+          }
+        })
+        .on("end", () => {
+          resolve(records);
+        })
+        .on("error", (error) => reject(error));
+    });
+  };
+
+  const handleFormUpload = async () => {
+    if (!selectedFile) {
+      return;
+    }
+
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const csvData = event.target.result;
+          const parsedProducts = await parseCSV(csvData);
+          setProducts(parsedProducts);
+        } catch (error) {
+          console.error("Error parsing CSV:", error);
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsText(selectedFile);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploading(false);
     }
   };
 
@@ -165,7 +248,7 @@ const BulkUpload = () => {
                 ) : (
                   <Button
                     variant="secondary"
-                    onClick={handleUpload}
+                    onClick={handleFormUpload}
                     disabled={!selectedFile}
                   >
                     Upload
@@ -174,9 +257,9 @@ const BulkUpload = () => {
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleCreateRequest} disabled={!filePath}>
+              {/* <Button onClick={handleCreateRequest} disabled={!filePath}>
                 Send For Approval
-              </Button>
+              </Button> */}
             </DialogFooter>
           </DialogContent>
         </Dialog>
