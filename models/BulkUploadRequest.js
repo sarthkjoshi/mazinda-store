@@ -4,8 +4,9 @@ const BulkUploadRequestSchema = new mongoose.Schema(
   {
     storeId: { type: String, required: true },
     storeName: { type: String },
-    filePath: { type: String, required: true },
+    filePath: { type: String },
     approved: { type: String, default: false },
+    requestProducts: { type: Array, default: [] },
   },
   { timestamps: true }
 );
