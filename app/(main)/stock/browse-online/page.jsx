@@ -25,7 +25,7 @@ const SearchOnline = () => {
       URL,
     });
 
-    console.log(data);
+    // console.log(data);
     setProductData({
       productNames: data.names,
       productImagePaths: data.images,
@@ -66,7 +66,9 @@ const SearchOnline = () => {
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setSelectedIndex(index)}>Choose</Button>
-            <Button onClick={handleAddToBucket}>Add to Bucket</Button>
+            <Button variant="secondary" onClick={handleAddToBucket}>
+              Add to Bucket
+            </Button>
           </div>
         </div>
 
