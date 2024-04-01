@@ -28,7 +28,8 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: "An error occurred while fetching the bucket : " + error,
+      message: "An error occurred while fetching the bucket",
+      error,
     });
   }
 }

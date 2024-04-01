@@ -2,83 +2,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { useSelector } from "react-redux";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
 const ProductList = () => {
-  const store = useSelector((state) => state.store.store);
   const [bucketData, setBucketData] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [filePath, setFilePath] = useState("");
-  useEffect(() => {
-    // Fetch product data from the backend or set it from wherever you have it
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/api/fetch-bucket");
-        console.log(response.data.bucket);
-        setBucketData(response.data.bucket);
-      } catch (error) {
-        console.error("Error fetching bucket data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  const handleUpload = async () => {
-    setUploading(true);
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", selectedFile);
-      formData.append("storeName", store.storeName);
-
-      // Send file to backend for processing and uploading to S3
-      const { data } = await axios.post("/api/upload/upload-csv", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const { data } = await axios.get("/api/fetch-bucket");
+      console.log(data);
       if (data.success) {
-        setFilePath(data.location);
-        toast.success("File uploaded successfully");
+        setBucketData(data.bucket);
       } else {
-        toast.error("Oops, something went wrong");
+        toast.error("An error occurred while fetching bucket");
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error("Error fetching bucket data:", error);
     } finally {
-      setUploading(false);
+      setLoading(false);
     }
   };
-  const handleCreateRequest = async () => {
-    try {
-      const { data } = await axios.post("/api/bulk-upload/create-request", {
-        storeId: store._id,
-        storeName: store.storeName,
-        filePath,
-      });
-      if (data.success) {
-        toast.success("Your request for bulk upload is successfully submitted");
-      } else {
-        toast.error("Oops, something went wrong. Please try again later");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const removeFromBucket = async (index) => {
     try {
       const { data } = await axios.post("/api/remove-from-bucket", {
@@ -96,6 +46,7 @@ const ProductList = () => {
       console.error("Error removing item from bucket:", error);
     }
   };
+
   const handleDownloadCSV = () => {
     // Get product names and image URLs from the bucketData state
     const productData = bucketData.map((bucket) => ({
@@ -151,15 +102,15 @@ const ProductList = () => {
           bucketData.map((bucket, index) => (
             <li
               key={index}
-              className="border p-5 rounded-xl flex flex-col gap-2 mt-2"
+              className="border p-5 rounded-xl flex flex-col gap-2 mt-3"
             >
               <div className="flex gap-4 items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Image
                     className="object-contain"
                     src={bucket.imagePath}
-                    width={100}
-                    height={100}
+                    width={80}
+                    height={80}
                     alt="product image"
                   />
                   <p className="font-semibold text-blue-950 mb-3">
@@ -177,7 +128,9 @@ const ProductList = () => {
             </li>
           ))
         ) : (
-          <li className="pt-3 text-gray-500">Your bucket is empty</li>
+          <li className="pt-3 text-gray-500">
+            {loading ? "Your bucket is empty" : "Loading"}
+          </li>
         )}
       </ul>
     </div>
