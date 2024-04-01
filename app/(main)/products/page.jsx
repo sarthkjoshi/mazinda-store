@@ -46,7 +46,7 @@ const ProductsPage = () => {
     if (status === "authenticated") {
       (async () => {
         const { data } = await axios.post("/api/product/fetch-store-products", {
-          storeId: session.user.id,
+          storeId: session.user?.id,
         });
         if (data.success) {
           setProducts(data.products);

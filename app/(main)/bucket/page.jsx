@@ -4,14 +4,27 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+
 const ProductList = () => {
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/api/auth/signin?callbackUrl=/client");
+    },
+  });
+
   const [bucketData, setBucketData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get("/api/fetch-bucket");
+      const { data } = await axios.get("/api/fetch-bucket", {
+        headers: {
+          Authorization: session?.user?.id,
+        },
+      });
       console.log(data);
       if (data.success) {
         setBucketData(data.bucket);

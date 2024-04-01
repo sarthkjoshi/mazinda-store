@@ -1,17 +1,16 @@
 import Store from "@/models/Store";
 import connectDB from "@/libs/mongoose";
 import { NextResponse } from "next/server";
-
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/options";
+import { headers } from "next/headers";
 
 export async function GET() {
+  // fetch the authorisation token from the request headers
+  const store_id = headers().get("Authorization");
+
   try {
-    const data = await getServerSession(authOptions);
-    const id = data.user.id;
     await connectDB();
 
-    const store = await Store.findById({ _id: id });
+    const store = await Store.findById(store_id);
     const bucket = store.productBucket;
 
     if (!store) {
