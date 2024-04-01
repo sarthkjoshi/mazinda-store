@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import AddSingleProduct from "@/components/add-product/AddSingleProduct";
 
 const SearchOnline = () => {
@@ -37,13 +38,16 @@ const SearchOnline = () => {
   const renderItem = (productName, imagePath, productLink, index) => {
     const handleAddToBucket = async () => {
       console.log(productName, imagePath);
-      const res = await axios.post("/api/add-bucket", {
+      const { data } = await axios.post("/api/add-bucket", {
         productName,
         imagePath,
-        naaam: "sarthak",
       });
 
-      console.log(res.data);
+      if (data.success) {
+        toast.success("Product added to bucket");
+      } else {
+        toast.error("Oops, something went wrong");
+      }
     };
 
     return (
@@ -83,34 +87,36 @@ const SearchOnline = () => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg">
-      <h1 className="text-lg">Browse products over the internet</h1>
-      <div className="flex gap-1 my-3">
-        <Input
-          placeholder="Search for products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+    <div className="relative">
+      <div className="bg-white p-4 rounded-lg">
+        <h1 className="text-lg">Browse products over the internet</h1>
+        <div className="flex gap-1 my-3">
+          <Input
+            placeholder="Search for products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
 
-        {loading ? (
-          <Button disabled>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Please wait
-          </Button>
-        ) : (
-          <Button onClick={() => fetchData()}>Search</Button>
-        )}
+          {loading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Please wait
+            </Button>
+          ) : (
+            <Button onClick={() => fetchData()}>Search</Button>
+          )}
+        </div>
+
+        {productData &&
+          productData.productNames.map((productName, index) =>
+            renderItem(
+              productName,
+              productData.productImagePaths[index],
+              productData.productLinks[index],
+              index
+            )
+          )}
       </div>
-
-      {productData &&
-        productData.productNames.map((productName, index) =>
-          renderItem(
-            productName,
-            productData.productImagePaths[index],
-            productData.productLinks[index],
-            index
-          )
-        )}
     </div>
   );
 };

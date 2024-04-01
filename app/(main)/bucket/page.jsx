@@ -142,63 +142,43 @@ const ProductList = () => {
 
   return (
     <div className="relative bg-white rounded-lg p-4">
-      <h1 className="font-bold text-xl">Bulk Upload</h1>
+      <h1 className="font-bold text-xl">Browse Your Bucket</h1>
       <div className="flex gap-2 flex-col md:flex-row mt-5">
         <Button onClick={handleDownloadCSV}>Download Template</Button>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="secondary">Upload File</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Upload File</DialogTitle>
-              <DialogDescription>
-                Upload the filled template downloaded on the previous screen
-                here. Click on Browse, choose the file and click on "Upload".
-                After final verification click on "Send For Approval"
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="flex gap-2">
-                <Input
-                  type="file"
-                  accept=".csv"
-                  onChange={(e) => setSelectedFile(e.target.files[0])}
-                />
-                {uploading ? (
-                  <Button disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Uploading
-                  </Button>
-                ) : (
-                  <Button
-                    variant="secondary"
-                    onClick={handleUpload}
-                    disabled={!selectedFile}
-                  >
-                    Upload
-                  </Button>
-                )}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={handleCreateRequest} disabled={!filePath}>
-                Send For Approval
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
       <ul>
-        {bucketData.map((bucket, index) => (
-          <li key={index} className="shadow-xl p-5 rounded-xl">
-            <Image src={bucket.imagePath} width={200} height={200} alt="er" />
-            <p className="font-semibold text-blue-950 mb-3">
-              {bucket.productName}
-            </p>
-            <Button onClick={() => removeFromBucket(index)}>Remove</Button>
-          </li>
-        ))}
+        {bucketData.length ? (
+          bucketData.map((bucket, index) => (
+            <li
+              key={index}
+              className="border p-5 rounded-xl flex flex-col gap-2 mt-2"
+            >
+              <div className="flex gap-4 items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Image
+                    className="object-contain"
+                    src={bucket.imagePath}
+                    width={100}
+                    height={100}
+                    alt="product image"
+                  />
+                  <p className="font-semibold text-blue-950 mb-3">
+                    {bucket.productName}
+                  </p>
+                </div>
+
+                <Button
+                  variant="destructive"
+                  onClick={() => removeFromBucket(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </li>
+          ))
+        ) : (
+          <li className="pt-3 text-gray-500">Your bucket is empty</li>
+        )}
       </ul>
     </div>
   );

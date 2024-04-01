@@ -7,8 +7,7 @@ import { authOptions } from "../auth/[...nextauth]/options";
 
 export async function POST(req) {
   try {
-    const { productName, imagePath, naaam } = await req.json();
-    console.log(productName, imagePath, naaam);
+    const { productName, imagePath } = await req.json();
     const data = await getServerSession(authOptions);
     const id = data.user.id;
     await connectDB();
