@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useSession } from "next-auth/react";
+import { LoaderButton } from "../utility/LoaderButton";
 
 const ExistingStock = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [productAddLoading, setProductAddLoading] = useState(false);
 
   const { data: session, status } = useSession();
 
@@ -27,6 +29,7 @@ const ExistingStock = () => {
     pricing: {
       mrp: "",
       costPrice: "",
+      salesPrice: "",
     },
     description: "",
     tags: [],
@@ -74,6 +77,7 @@ const ExistingStock = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setProductAddLoading(true);
 
     try {
       const { data } = await axios.post("/api/product/add-new-product", {
@@ -81,24 +85,28 @@ const ExistingStock = () => {
       });
 
       if (data.success) {
-        toast.success(data.message, { autoClose: 3000 });
+        toast.success(data.message);
       } else {
-        toast.error(data.message, { autoClose: 3000 });
+        toast.error(data.message);
       }
 
       setProductData({
         productName: "",
-        storeToken: user,
+        storeId: session.user.id,
         category: "",
+        subcategory: "",
         pricing: {
           mrp: "",
           costPrice: "",
+          salesPrice: "",
         },
         description: "",
         tags: [],
       });
     } catch (e) {
-      toast.error(e.message, { autoClose: 3000 });
+      toast.error(e.message);
+    } finally {
+      setProductAddLoading(false);
     }
   };
 
@@ -122,10 +130,10 @@ const ExistingStock = () => {
   };
 
   return (
-    <div className="p-2">
+    <div className="p-2 bg-gray-100">
       {/* Search Bar */}
       <div className="mb-4 flex flex-col gap-2">
-        <Label htmlFor="search">Search for a Product:</Label>
+        <Label className="text-lg font-semibold">Search for a product</Label>
         <div className="flex gap-2">
           <Input
             type="text"
@@ -140,9 +148,7 @@ const ExistingStock = () => {
               Please wait
             </Button>
           ) : (
-            <Button variant="secondary" onClick={handleSearch}>
-              Search
-            </Button>
+            <Button onClick={handleSearch}>Search</Button>
           )}
         </div>
 
@@ -155,7 +161,7 @@ const ExistingStock = () => {
                 <li
                   key={product._id}
                   onClick={() => handleProductSelection(product)}
-                  className="cursor-pointer text-gray-700 w-44 border rounded-lg m-3 flex flex-col items-center p-2"
+                  className="bg-white cursor-pointer text-gray-700 w-44 border rounded-lg m-3 flex flex-col items-center p-2"
                 >
                   <AspectRatio
                     ratio={1 / 1}
@@ -180,7 +186,10 @@ const ExistingStock = () => {
           onSubmit={handleSubmit}
           className={`mt-5 text-sm ${!selectedProduct ? "hidden" : "block"}`}
         >
-          <div className="mb-4">
+          <Label className="text-lg font-semibold">
+            Verify Product Details
+          </Label>
+          <div className="my-4">
             <Label htmlFor="productName">Product Name:</Label>
             <Input
               type="text"
@@ -191,7 +200,7 @@ const ExistingStock = () => {
             />
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex gap-2">
             <div className="mb-4 mx-1">
               <Label htmlFor="mrp">MRP:</Label>
               <Input
@@ -214,23 +223,6 @@ const ExistingStock = () => {
             </div>
           </div>
 
-          {/* {productData.description &&
-            productData.description.map((desc) => {
-              return (
-                <div className="mb-4" key={desc.heading}>
-                  <Label htmlFor="description">{desc.heading}</Label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows="4"
-                    className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                    value={desc.description}
-                    onChange={handleFieldChange}
-                  />
-                </div>
-              );
-            })} */}
-
           <div>
             <Label className="font-semibold">Description:</Label>
             {editedDescription.map((desc, index) => (
@@ -252,8 +244,12 @@ const ExistingStock = () => {
             ))}
           </div>
 
-          <div className="w-full flex justify-center">
-            <Button type="submit">Add Stock</Button>
+          <div>
+            <LoaderButton
+              title="Add Stock"
+              loading={productAddLoading}
+              type="submit"
+            />
             {/* <button
               className="bg-white border border-[#f17e13] mx-2 text-[#f17e13] px-4 py-1 rounded-full hover:opacity-75"
               onClick={() => {

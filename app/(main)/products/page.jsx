@@ -27,6 +27,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const ProductsPage = () => {
   const { data: session, status } = useSession();
@@ -41,18 +43,33 @@ const ProductsPage = () => {
   const [addStoryLoading, setAddStoryLoading] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [specialPrice, setSpecialPrice] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchProducts = async () => {
+    setLoading(true);
+    setProducts([]);
+    setApprovedProducts([]);
+    setPendingProducts([]);
     if (status === "authenticated") {
-      (async () => {
+      try {
         const { data } = await axios.post("/api/product/fetch-store-products", {
           storeId: session.user?.id,
         });
         if (data.success) {
+          console.log(data);
           setProducts(data.products);
         }
-      })();
+      } catch (err) {
+        console.log(err);
+        toast.error("Error while fetching products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
     }
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
   // const toggleAvailability = async (productId) => {
@@ -218,25 +235,38 @@ const ProductsPage = () => {
 
   return (
     <div className="p-4 bg-white rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Your Products</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold mb-4">Your Products</h1>
+        <Button variant="secondary" onClick={fetchProducts}>
+          Refresh
+        </Button>
+      </div>
 
-      <Tabs defaultValue="all">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="approved">Approved</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-        </TabsList>
+      {!loading ? (
+        <Tabs defaultValue="all">
+          <TabsList>
+            <TabsTrigger value="all">All ({products?.length})</TabsTrigger>
+            <TabsTrigger value="approved">
+              Approved ({approvedProducts?.length})
+            </TabsTrigger>
+            <TabsTrigger value="pending">
+              Pending ({pendingProducts?.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="all">{productsTable(products)}</TabsContent>
+          <TabsContent value="all">{productsTable(products)}</TabsContent>
 
-        <TabsContent value="approved">
-          {productsTable(approvedProducts)}
-        </TabsContent>
+          <TabsContent value="approved">
+            {productsTable(approvedProducts)}
+          </TabsContent>
 
-        <TabsContent value="pending">
-          {productsTable(pendingProducts)}
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="pending">
+            {productsTable(pendingProducts)}
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <OvalLoader />
+      )}
     </div>
   );
 };
