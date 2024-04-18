@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import OvalLoader from "@/components/utility/OvalLoader";
+import { useSession } from "next-auth/react";
 
 import {
   Table,
@@ -20,7 +21,8 @@ import {
 } from "@/components/ui/table";
 
 const ImageGallery = () => {
-  const store_name = useSelector((state) => state.store.store.storeName);
+  const { data: session, status } = useSession();
+  const store_name = session?.user.storeName;
 
   const [files, setFiles] = useState(null);
   const [uploadLoading, setUploadLoading] = useState(false);
@@ -100,7 +102,7 @@ const ImageGallery = () => {
   }, [store_name]);
 
   return (
-    <div className="relative h-[80vh] md:w-2/3 mx-auto p-4">
+    <div className="relative h-[80vh] mx-auto p-4 bg-white">
       <h1 className="font-bold text-xl my-4">Upload Images</h1>
 
       <div>
@@ -161,7 +163,7 @@ const ImageGallery = () => {
                       </TableCell>
                       <TableCell>
                         <img
-                          className="w-36 aspect-square object-contain"
+                          className="w-16 md:w-36 aspect-square object-contain"
                           src={imagePath}
                           alt="image"
                         />

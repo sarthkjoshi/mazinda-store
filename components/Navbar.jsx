@@ -23,7 +23,7 @@ const Navbar = () => {
         {status === "authenticated" ? (
           <>
             <div className="text-center hidden md:block">
-              <span>{session.user.storeName.toUpperCase()}</span>
+              <span>{session?.user.storeName.toUpperCase()}</span>
             </div>
             <Button
               variant="destructive"
