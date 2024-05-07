@@ -108,7 +108,22 @@ const ImageGallery = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+  const handleDelete = async (imagePath) => {
+    try {
+      await axios.delete(
+        `/api/aws/delete-image?imagePath=${encodeURIComponent(imagePath)}`
+      );
 
+      setFetchedImages((prevImages) =>
+        prevImages.filter((img) => img !== imagePath)
+      );
+
+      toast.success("Image deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting image");
+    }
+  };
   return (
     <div className="relative  mx-auto p-4 bg-white">
       <h1 className="font-bold text-xl my-4">Upload Images</h1>
@@ -179,6 +194,14 @@ const ImageGallery = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-3 items-center">
+                            <Button
+                              className="scale-75"
+                              variant="destructive"
+                              onClick={() => handleDelete(imagePath)} // Add a function to handle delete
+                            >
+                              Delete
+                            </Button>
+
                             <Button
                               className="scale-75"
                               variant="outline"
