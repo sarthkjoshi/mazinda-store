@@ -28,6 +28,9 @@ const ImageGallery = () => {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [fetchedImages, setFetchedImages] = useState([]);
   const [fetchingLoading, setFetchingLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(1000);
 
   const onFileSubmit = async (e) => {
     e.preventDefault();
@@ -59,13 +62,11 @@ const ImageGallery = () => {
 
       console.log("json" + JSON.stringify(json));
 
-      // return
-
       const fileLocations = json.locations;
       console.log(fileLocations);
       toast.success("Images uploaded successfully");
 
-      setFiles([]); // Reset the files array
+      setFiles([]);
     } catch (error) {
       console.error(error);
       toast.error("Error uploading images");
@@ -82,6 +83,8 @@ const ImageGallery = () => {
           const { data } = await axios.post("/api/aws/get-files", {
             store_name,
             folder_name: "images",
+            page: currentPage,
+            limit,
           });
 
           if (data.success) {
@@ -91,6 +94,7 @@ const ImageGallery = () => {
                   `${process.env.NEXT_PUBLIC_AWS_IMAGE_BUCKET_BASE_URI}/${fileName}`
               )
             );
+            setTotalPages(data.totalPages);
           }
           setFetchingLoading(false);
         })();
@@ -99,10 +103,14 @@ const ImageGallery = () => {
         setFetchingLoading(true);
       }
     }
-  }, [store_name]);
+  }, [store_name, currentPage, limit]);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
-    <div className="relative h-[80vh] mx-auto p-4 bg-white">
+    <div className="relative  mx-auto p-4 bg-white">
       <h1 className="font-bold text-xl my-4">Upload Images</h1>
 
       <div>
@@ -138,56 +146,76 @@ const ImageGallery = () => {
       ) : (
         <div>
           {fetchedImages.length ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">S.No</TableHead>
-                  <TableHead>Image</TableHead>
-                  <TableHead>URI</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {fetchedImages.map((imagePath, index) => {
-                  let fileName = imagePath.split("/");
-                  fileName = fileName[fileName.length - 1];
-                  let timeStamp = fileName.split("_");
-                  timeStamp = timeStamp[0];
-                  return (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">
-                        {/* {new Date(timeStamp)
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[50px]">S.No</TableHead>
+                    <TableHead>Image</TableHead>
+                    <TableHead>URI</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {fetchedImages.map((imagePath, index) => {
+                    let fileName = imagePath.split("/");
+                    fileName = fileName[fileName.length - 1];
+                    let timeStamp = fileName.split("_");
+                    timeStamp = timeStamp[0];
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          {/* {new Date(timeStamp)
                           .toISOString()
                           .replace("T", " ")
                           .replace(/\.\d+Z$/, " UTC")} */}
-                        {index + 1}
-                      </TableCell>
-                      <TableCell>
-                        <img
-                          className="w-16 md:w-36 aspect-square object-contain"
-                          src={imagePath}
-                          alt="image"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-3 items-center">
-                          <Button
-                            className="scale-75"
-                            variant="outline"
-                            onClick={() => {
-                              navigator.clipboard.writeText(imagePath);
-                              toast.info("Copied to clipboard");
-                            }}
-                          >
-                            Copy
-                          </Button>
-                          <span className="block">{imagePath}</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                          {index + 1}
+                        </TableCell>
+                        <TableCell>
+                          <img
+                            className="w-16 md:w-36 aspect-square object-contain"
+                            src={imagePath}
+                            alt="image"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-3 items-center">
+                            <Button
+                              className="scale-75"
+                              variant="outline"
+                              onClick={() => {
+                                navigator.clipboard.writeText(imagePath);
+                                toast.info("Copied to clipboard");
+                              }}
+                            >
+                              Copy
+                            </Button>
+                            <span className="block">{imagePath}</span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+              <div className="flex gap-1 justify-center mt-5">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <Button variant="outline">{currentPage}</Button>
+                <Button
+                  variant="secondary"
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           ) : (
             <span className="text-gray-500">No images uploaded</span>
           )}
