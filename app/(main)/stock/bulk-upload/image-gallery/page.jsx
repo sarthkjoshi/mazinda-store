@@ -187,7 +187,7 @@ const ImageGallery = () => {
                         </TableCell>
                         <TableCell>
                           <img
-                            className="w-16 md:w-36 aspect-square object-contain"
+                            className="w-16 md:w-28 aspect-square object-contain"
                             src={imagePath}
                             alt="image"
                           />
@@ -229,10 +229,12 @@ const ImageGallery = () => {
                 >
                   Previous
                 </Button>
-                <Button variant="outline">{currentPage}</Button>
+                <Button variant="outline" disabled>
+                  {currentPage}
+                </Button>
                 <Button
                   variant="secondary"
-                  disabled={currentPage === totalPages}
+                  disabled={fetchedImages.length < 1000}
                   onClick={() => handlePageChange(currentPage + 1)}
                 >
                   Next
