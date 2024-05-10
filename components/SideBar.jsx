@@ -11,7 +11,7 @@ import { AiFillHome } from "react-icons/ai";
 
 export default function SideBar() {
   return (
-    <aside className="flex h-screen w-64 flex-col overflow-y-auto bg-white px-5 py-8">
+    <aside className="flex h-screen w-60 flex-col overflow-y-auto bg-white px-3">
       <div className="space-y-3 ">
         <Link
           className="flex gap-1 transform items-center rounded-lg px-3 py-2 text-gray-600 transition-colors duration-300 hover:bg-gray-100 hover:text-gray-700"

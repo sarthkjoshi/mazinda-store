@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { Delete02Icon } from "@/public/svg/Delete02Icon";
 
 const ProductList = () => {
   const { data: session } = useSession({
@@ -118,24 +119,23 @@ const ProductList = () => {
               className="border p-5 rounded-xl flex flex-col gap-2 mt-3"
             >
               <div className="flex gap-4 items-center justify-between">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-5">
                   <Image
                     className="object-contain"
                     src={bucket.imagePath}
-                    width={80}
-                    height={80}
+                    width={45}
+                    height={45}
                     alt="product image"
                   />
-                  <p className="font-semibold text-blue-950 mb-3">
-                    {bucket.productName}
-                  </p>
+                  <span>{bucket.productName}</span>
                 </div>
 
                 <Button
                   variant="destructive"
+                  className="scale-75"
                   onClick={() => removeFromBucket(index)}
                 >
-                  Remove
+                  <Delete02Icon />
                 </Button>
               </div>
             </li>

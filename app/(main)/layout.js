@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
           <div className="hidden md:block h-full">
             <SideBar />
           </div>
-          <div className="w-full bg-gray-100 min-h-screen p-2 md:p-4 rounded-lg">
+          <div className="w-full bg-gray-100 min-h-screen p-2 md:p-3 rounded-lg">
             {children}
             <div className="px-2 md:hidden">
               <BottomNavigationBar />

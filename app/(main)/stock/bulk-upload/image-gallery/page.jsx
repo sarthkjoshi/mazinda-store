@@ -19,6 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Delete02Icon } from "@/public/svg/Delete02Icon";
+import { CopyIcon } from "@/public/svg/CopyIcon";
 
 const ImageGallery = () => {
   const { data: session, status } = useSession();
@@ -195,22 +197,22 @@ const ImageGallery = () => {
                         <TableCell>
                           <div className="flex gap-3 items-center">
                             <Button
-                              className="scale-75"
+                              className="scale-75 p-2"
                               variant="destructive"
                               onClick={() => handleDelete(imagePath)} // Add a function to handle delete
                             >
-                              Delete
+                              <Delete02Icon color={"white"} />
                             </Button>
 
                             <Button
-                              className="scale-75"
+                              className="scale-75 p-2"
                               variant="outline"
                               onClick={() => {
                                 navigator.clipboard.writeText(imagePath);
                                 toast.info("Copied to clipboard");
                               }}
                             >
-                              Copy
+                              <CopyIcon color={"black"} />
                             </Button>
                             <span className="block">{imagePath}</span>
                           </div>

@@ -25,39 +25,43 @@ const CurrentOrders = async () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {currentOrders.map((order) => {
-            const orderDate = new Date(order.createdAt);
-            const formattedDate = orderDate.toLocaleDateString();
-            const formattedTime = orderDate.toLocaleTimeString();
-            return (
-              <TableRow key={order._id}>
-                <TableCell>
-                  <span className="text-sm">{formattedTime}</span>
-                  <br />
-                  <span className="text-[10px]">{formattedDate}</span>
-                </TableCell>
-                <TableCell>
-                  {order.cart.map((item) => (
-                    <Link
-                      key={item._id}
-                      href={`https://www.mazinda.com/product/view-product?id=${item._id}`}
-                      target="_blank"
-                      className="block"
-                    >
-                      {item.productName.slice(0, 18)}
-                    </Link>
-                  ))}
-                </TableCell>
-                <TableCell>
-                  {order.cart.map((item) => (
-                    <span key={item._id} className="text-sm block">
-                      {item.quantity}
-                    </span>
-                  ))}
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          {currentOrders.length ? (
+            currentOrders.map((order) => {
+              const orderDate = new Date(order.createdAt);
+              const formattedDate = orderDate.toLocaleDateString();
+              const formattedTime = orderDate.toLocaleTimeString();
+              return (
+                <TableRow key={order._id}>
+                  <TableCell>
+                    <span className="text-sm">{formattedTime}</span>
+                    <br />
+                    <span className="text-[10px]">{formattedDate}</span>
+                  </TableCell>
+                  <TableCell>
+                    {order.cart.map((item) => (
+                      <Link
+                        key={item._id}
+                        href={`https://www.mazinda.com/product/view-product?id=${item._id}`}
+                        target="_blank"
+                        className="block"
+                      >
+                        {item.productName.slice(0, 18)}
+                      </Link>
+                    ))}
+                  </TableCell>
+                  <TableCell>
+                    {order.cart.map((item) => (
+                      <span key={item._id} className="text-sm block">
+                        {item.quantity}
+                      </span>
+                    ))}
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <div className="text-gray-500 mt-2">No orders currently</div>
+          )}
         </TableBody>
       </Table>
     </div>
